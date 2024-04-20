@@ -10,10 +10,8 @@ import CompanySignupStepper from './components/SignupForms/CompanySignupStepper'
 import Signin from './components/Signin';
 import Success from './components/Success';
 import Cancel from './components/Cancel';
-import AddProject from './components/AddProject';
 import ProfileManager from './components/ProfileManager';
 import StripePayment from './components/StripePayment';
-import Checkout from './components/Checkout';
 import AdminPage from './pages/AdminPage';
 import NewNav from './components/Navbar/NewNav';
 import LandingPage from './pages/LandingPage';

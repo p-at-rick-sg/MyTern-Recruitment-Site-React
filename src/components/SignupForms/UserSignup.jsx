@@ -4,13 +4,14 @@ import useFetch from '../../hooks/useFetch';
 import {useUser} from '../../hooks/useUser';
 
 //Component Imports
-import AddressFormItems from '../FormComponents/AddressFormComponents';
+import AddressFormComponents from '../FormComponents/AddressFormComponents';
 import NameFormComponents from '../FormComponents/NameFormComponents';
 import PasswordComponents from '../FormComponents/PasswordComponents';
 
 //MUI Imports
 import {Box, Button, Container, Divider, Link, Typography} from '@mui/material';
 import SubmitButtonsComponents from '../FormComponents/SubmitButtonsComponents';
+import EmailComponents from '../FormComponents/EmailComponents';
 
 const UserSignup = () => {
   const fetchData = useFetch();
@@ -26,6 +27,7 @@ const UserSignup = () => {
     country: false,
     postcode: false,
     email: false,
+    emailMismatch: false,
     emailExists: false,
     password: false,
     passwordMismatch: false,
@@ -35,6 +37,7 @@ const UserSignup = () => {
     firstName: '',
     lastName: '',
     email: '',
+    emailCheck: '',
     address1: '',
     address2: '',
     city: '',
@@ -54,11 +57,20 @@ const UserSignup = () => {
     }
     SetInputFields({...inputFields, [e.target.name]: e.target.value});
     if (inputFields.password !== inputFields.passwordCheck) {
-      setPasswordErrorText('Password Mismatch');
+      setError({...error, passwordMismatch: true});
+    }
+    if (inputFields.email !== inputFields.emailCheck) {
+      setError({...error, emailMismatch: true});
     }
   };
 
+  const postNewUser = async userObj => {
+    const signupResult = await fetchData('/auth/signup', 'PUT', userObj, undefined);
+    console.log(signupResult);
+  };
+
   const handleSignup = async e => {
+    console.log('singing up function');
     e.preventDefault();
     setSubmitting(true); //we can use this variable for the spinner
     const newUser = {
@@ -67,13 +79,16 @@ const UserSignup = () => {
       email: inputFields.email,
       password: inputFields.password,
       address1: inputFields.address1,
-      town: inputFields.town,
+      city: inputFields.city,
       country: inputFields.country,
       postcode: inputFields.postcode,
     };
     if (inputFields.address2) newUser.address2 = inputFields.address2;
     if (inputFields.telephone) newUser.telephone = inputFields.telephone;
+    console.log(newUser);
     //call the function to handle the data part
+    const result = await postNewUser(newUser);
+    //check for success
   };
 
   return (
@@ -95,10 +110,16 @@ const UserSignup = () => {
             error={error}
             submitting={submitting}
           />
+          <EmailComponents
+            inputFields={inputFields}
+            handleChange={handleChange}
+            error={error}
+            sunmitting={submitting}
+          />
           <Divider flexItem={true} sx={{mt: '10px', mb: '15px', color: 'grey'}} textAlign="center">
             Address
           </Divider>
-          <AddressFormItems
+          <AddressFormComponents
             inputFields={inputFields}
             handleChange={handleChange}
             error={error}
@@ -116,7 +137,9 @@ const UserSignup = () => {
           <Divider flexItem={true} sx={{mt: '15px', mb: '10px', color: 'grey'}} textAlign="center">
             Submit When Ready
           </Divider>
-          <SubmitButtonsComponents handleSubmit={handleSignup} />
+          <Button type="submit" variant="contained">
+            Sign Me Up
+          </Button>
           <Typography variant="button" display="block" sx={{color: '#64B5F6'}}>
             <NavLink to="/signin">Already have an account: Sign In</NavLink>
           </Typography>

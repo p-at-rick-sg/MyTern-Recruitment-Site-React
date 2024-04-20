@@ -50,6 +50,7 @@ const AddressFormComponents = ({inputFields, handleChange, error, submitting}) =
           disabled={submitting ? true : false}
         />
       </Grid>
+      {/* TODO: Change this to a select driven by country table */}
       <Grid item xs={12} sm={6}>
         <TextField
           autoComplete="country"
