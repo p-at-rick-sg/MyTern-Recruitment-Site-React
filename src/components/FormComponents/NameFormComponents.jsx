@@ -16,7 +16,7 @@ const NameFormComponents = ({inputFields, handleChange, error, submitting}) => {
           onChange={handleChange}
           autoFocus
           error={error.firstName}
-          inputProps={{pattern: '[A-Za-z]+'}}
+          inputProps={{pattern: '[A-Za-z ]+'}}
           helperText={error.firstName}
           disabled={submitting ? true : false}
         />
@@ -30,7 +30,7 @@ const NameFormComponents = ({inputFields, handleChange, error, submitting}) => {
           name="lastName"
           value={inputFields.lastName}
           onChange={handleChange}
-          inputProps={{pattern: '[A-Za-z]+'}}
+          inputProps={{pattern: '[A-Za-z ]+'}}
           error={error.lastName}
           helperText={error.lastName}
           autoComplete="family-name"

@@ -2,7 +2,7 @@
 import {TextField, Grid, Select, InputLabel, MenuItem} from '@mui/material';
 
 const PositionFormComponents = ({inputFields, handleChange, error, submitting}) => {
-  const useCases = ['Hiring Manager', 'Internal Recruiter', 'Recruitment Agency', 'HR Executive'];
+  const useCases = ['Hiring Manager', 'Internal Recruiter', 'Recruitment Agency', 'HR Executive']; //change these to be a contraint table later TODO
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={6}>
@@ -17,7 +17,7 @@ const PositionFormComponents = ({inputFields, handleChange, error, submitting}) 
           onChange={handleChange}
           autoFocus
           error={error.position}
-          inputProps={{pattern: '[A-Za-z]+'}}
+          inputProps={{pattern: '[A-Za-z ]+'}}
           helperText={error.position}
           disabled={submitting ? true : false}
         />

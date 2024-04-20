@@ -11,13 +11,19 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import CompanySignupStep2 from './CompanySignupStep2';
+import {randomCompanyName} from '@mui/x-data-grid-generator';
 
 const steps = ['Your Details', 'Company Details', 'Create Users'];
 
 export default function CompanySignupStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
-
+  const [activeStepName, setActiveStepName] = useState([
+    'Your Details',
+    'Company Details',
+    'Add Users',
+  ]);
   const {setUser, user} = useUser(); // comes from user context
   const [submitting, setSubmitting] = useState(false);
 
@@ -52,18 +58,29 @@ export default function CompanySignupStepper() {
     role: 'user',
     password: '',
     passwordCheck: '',
+    companyName: '',
+    companyNumber: '',
+    companySector: '',
+    totalEmployees: 1,
   });
 
   const handleChange = e => {
-    console.log(e.target.validity);
-    if (!e.target.validity.valid) {
-      setError({...error, [e.target.name]: true});
+    console.log(e.target.value);
+    if (e.target.name === 'companySector') {
+      SetInputFields({...inputFields, [e.target.name]: e.target.value});
     } else {
-      setError({...error, [e.target.name]: false});
-    }
-    SetInputFields({...inputFields, [e.target.name]: e.target.value});
-    if (inputFields.password !== inputFields.passwordCheck) {
-      setPasswordErrorText('Password Mismatch');
+      if (!e.target.validity.valid) {
+        setError({...error, [e.target.name]: true});
+      } else {
+        setError({...error, [e.target.name]: false});
+      }
+      SetInputFields({...inputFields, [e.target.name]: e.target.value});
+      if (inputFields.password !== inputFields.passwordCheck) {
+        setPasswordErrorText('Password Mismatch');
+      }
+      if (inputFields.email !== inputFields.emailCheck) {
+        setError({...error, emailMismatch: true});
+      }
     }
   };
 
@@ -156,11 +173,23 @@ export default function CompanySignupStepper() {
         </Fragment>
       ) : (
         <Fragment>
-          <Typography sx={{mt: 2, mb: 1}}>Step {activeStep + 1}: Add Your Details</Typography>
+          <Typography sx={{mt: 2, mb: 1}}>
+            Step {activeStep + 1}: {activeStepName[activeStep]}
+          </Typography>
           {/* Add the content of the step here using new components */}
           {activeStep === 0 && (
             <Fragment>
               <CompanySignupStep1
+                inputFields={inputFields}
+                handleChange={handleChange}
+                error={error}
+                submitting={submitting}
+              />
+            </Fragment>
+          )}
+          {activeStep === 1 && (
+            <Fragment>
+              <CompanySignupStep2
                 inputFields={inputFields}
                 handleChange={handleChange}
                 error={error}
