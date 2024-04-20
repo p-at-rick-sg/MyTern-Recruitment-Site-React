@@ -92,7 +92,7 @@ const Signin = () => {
   };
 
   const handleGoogleSignin = async () => {
-    const response = await fetch('http://localhost:7001/oauth2', {
+    const response = await fetch('http://localhost:7001/auth/google', {
       method: 'POST',
     });
     const data = await response.json();
