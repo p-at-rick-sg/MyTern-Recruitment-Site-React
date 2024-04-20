@@ -23,7 +23,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const Signin = () => {
   const fetchData = useFetch();
-  const {pageTitle, setPageTitle, user, setUser} = useUser(); // comes from user context
+  const {user, setUser} = useUser(); // comes from user context
   const [credentials, setCredentials] = useState({email: '', password: ''});
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -35,9 +35,9 @@ const Signin = () => {
     if (sessionStorage.getItem('access') !== null) {
       console.log('data in session storage, bypassing login');
       const sessionAccess = sessionStorage.getItem('access');
-      const role = sessionStorage.getItem('role');
-      setUser({...user, accessToken: sessionAccess, role: role});
-      if (role === 'contributor') {
+      const type = sessionStorage.getItem('type');
+      setUser({...user, accessToken: sessionAccess, type: type});
+      if (type !== 'user') {
         navigate('/member');
       } else {
         navigate('/');
@@ -56,17 +56,18 @@ const Signin = () => {
       email: credentials.email,
       password: credentials.password,
     });
+    console.log('here is what the API returns: ', result);
     if (result.ok) {
       localStorage.setItem('refresh', result.data.refresh); //set the refresh in local storage
       const decodedClaims = jwtDecode(result.data.access); //decode the access token
       setUser({
         ...user,
-        role: decodedClaims.role,
+        type: decodedClaims.type,
         accessToken: result.data.access,
         id: result.data.id,
       });
       sessionStorage.setItem('access', result.data.access);
-      sessionStorage.setItem('role', decodedClaims.role);
+      sessionStorage.setItem('type', decodedClaims.type);
       sessionStorage.setItem('id', decodedClaims.id);
       setSubmitting(false);
       if (decodedClaims.role === 'contributor') {

@@ -44,7 +44,7 @@ const AddressFormComponents = ({inputFields, handleChange, error, submitting}) =
           label="City"
           value={inputFields.city}
           onChange={handleChange}
-          inputProps={{pattern: '[A-Za-z]+'}}
+          inputProps={{pattern: '[A-Za-z ]+'}}
           error={error.city}
           helperText={error.city ? 'Please enter Letters Only' : ''}
           disabled={submitting ? true : false}
@@ -60,7 +60,7 @@ const AddressFormComponents = ({inputFields, handleChange, error, submitting}) =
           id="country"
           label="Country"
           value={inputFields.country}
-          inputProps={{pattern: '[A-Za-z]+'}}
+          inputProps={{pattern: '[A-Za-z ]+'}}
           error={error.country}
           helperText={error.country ? 'Please enter Letters Only' : ''}
           onChange={handleChange}

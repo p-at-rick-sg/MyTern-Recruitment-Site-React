@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useNavigate} from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import {useUser} from '../../hooks/useUser';
 
@@ -15,6 +15,7 @@ import EmailComponents from '../FormComponents/EmailComponents';
 
 const UserSignup = () => {
   const fetchData = useFetch();
+  const navigate = useNavigate();
   const {setUser, user} = useUser(); // comes from user context
   const [submitting, setSubmitting] = useState(false);
 
@@ -88,7 +89,8 @@ const UserSignup = () => {
     console.log(newUser);
     //call the function to handle the data part
     const result = await postNewUser(newUser);
-    //check for success
+    if (result) setSubmitting(false);
+    navigate('/signin');
   };
 
   return (
@@ -114,7 +116,7 @@ const UserSignup = () => {
             inputFields={inputFields}
             handleChange={handleChange}
             error={error}
-            sunmitting={submitting}
+            submitting={submitting}
           />
           <Divider flexItem={true} sx={{mt: '10px', mb: '15px', color: 'grey'}} textAlign="center">
             Address
@@ -137,9 +139,7 @@ const UserSignup = () => {
           <Divider flexItem={true} sx={{mt: '15px', mb: '10px', color: 'grey'}} textAlign="center">
             Submit When Ready
           </Divider>
-          <Button type="submit" variant="contained">
-            Sign Me Up
-          </Button>
+          <SubmitButtonsComponents handleSubmit={handleSignup} />
           <Typography variant="button" display="block" sx={{color: '#64B5F6'}}>
             <NavLink to="/signin">Already have an account: Sign In</NavLink>
           </Typography>

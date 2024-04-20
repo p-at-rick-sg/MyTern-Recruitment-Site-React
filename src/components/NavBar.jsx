@@ -34,7 +34,7 @@ const NavBar = () => {
         <Box sx={{flexgrow: 1}}>
           <AppBar position="static">
             <Toolbar>
-              <Link to="/home">
+              <Link to="/">
                 <img src="../src/assets/mytern-logo.png" alt="mytern"></img>
               </Link>
 
