@@ -15,7 +15,7 @@ const CompanyInfoComponents = ({inputFields, handleChange, error, submitting}) =
       try {
         console.log('trying to fetch the sectors');
         const response = await fetchData('/api/sectors', 'get');
-        console.log(response.data);
+        console.log('here is the response for sector: ', response);
         setSectors(response.data);
         if (!response.ok) {
           throw new Error('Failed to fetch sectors');
@@ -90,7 +90,7 @@ const CompanyInfoComponents = ({inputFields, handleChange, error, submitting}) =
           onChange={handleChange}
           disabled={submitting ? true : false}>
           {sectors &&
-            sectors.data.map(sector => (
+            sectors.map(sector => (
               <MenuItem key={sector} value={sector}>
                 {sector}
               </MenuItem>

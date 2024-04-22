@@ -38,6 +38,7 @@ export default function CompanySignupStepper() {
     country: false,
     postcode: false,
     email: false,
+    emailMismatch: false,
     emailExists: false,
     password: false,
     passwordMismatch: false,
@@ -49,6 +50,7 @@ export default function CompanySignupStepper() {
     useCase: '',
     position: '',
     email: '',
+    emailCheck: '',
     address1: '',
     address2: '',
     city: '',
@@ -61,41 +63,89 @@ export default function CompanySignupStepper() {
     companyName: '',
     companyNumber: '',
     companySector: '',
-    totalEmployees: 1,
+    totalEmployees: 10,
   });
 
-  const handleChange = e => {
-    console.log(e.target.value);
-    if (e.target.name === 'companySector') {
-      SetInputFields({...inputFields, [e.target.name]: e.target.value});
-    } else {
-      if (!e.target.validity.valid) {
-        setError({...error, [e.target.name]: true});
-      } else {
-        setError({...error, [e.target.name]: false});
-      }
-      SetInputFields({...inputFields, [e.target.name]: e.target.value});
-      if (inputFields.password !== inputFields.passwordCheck) {
-        setPasswordErrorText('Password Mismatch');
-      }
+  const validateEmailMatch = () => {
+    setError(prevState => {
+      const updatedState = {...prevState}; // Make a copy of the previous state
+
+      // Check if emails match
       if (inputFields.email !== inputFields.emailCheck) {
-        setError({...error, emailMismatch: true});
+        updatedState.emailMismatch = true;
+        updatedState.email = true;
+        updatedState.emailCheck = true;
+      } else {
+        updatedState.emailMismatch = false;
+        updatedState.email = false;
+        updatedState.emailCheck = false;
+      }
+      return updatedState; // Return the updated state
+    });
+  };
+
+  const validatePWMatch = () => {
+    setError(prevState => {
+      const updatedState = {...prevState}; // Make a copy of the previous state
+
+      // Check if passwords match
+      if (inputFields.password !== inputFields.passwordCheck) {
+        updatedState.passwordMismatch = true;
+        updatedState.password = true;
+        updatedState.passwordCheck = true;
+      } else {
+        updatedState.passwordMismatch = false;
+        updatedState.password = false;
+        updatedState.passwordCheck = false;
+      }
+
+      return updatedState; // Return the updated state
+    });
+  };
+
+  const handleChange = e => {
+    console.log(e.target.name);
+    //handles the comapy sector field only
+    if (e.target.name === 'companySector') {
+      SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
+    } else {
+      SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
+      console.log(`setting ${e.target.name} to ${e.target.value}`);
+      //checks all other fileds for valid input based on the input prop regex
+      if (!e.target.validity.valid) {
+        console.log(`setting ${e.target.name} error to true`);
+        setError(prevState => ({...prevState, [e.target.name]: true}));
+      } else {
+        console.log(`setting ${e.target.name} error to false`);
+        setError(prevState => ({...prevState, [e.target.name]: false}));
+      }
+      // check the matching passwords
+      if (e.target.name === 'passwordCheck') {
+        validatePWMatch();
+      }
+      //check the matching emails
+      if (e.target.name === 'emailCheck') {
+        validateEmailMatch();
       }
     }
   };
 
-  const handleSignup = async e => {
-    e.preventDefault();
+  const handleSignup = async () => {
     setSubmitting(true); //we can use this variable for the spinner
     const newUser = {
       firstName: inputFields.firstName,
       lastName: inputFields.lastName,
+      position: inputFields.position,
+      useCase: inputFields.useCase,
       email: inputFields.email,
       password: inputFields.password,
       address1: inputFields.address1,
-      town: inputFields.town,
+      city: inputFields.city,
       country: inputFields.country,
       postcode: inputFields.postcode,
+      companySector: inputFields.companySector,
+      companyNumber: inputFields.companyNumber,
+      totalEmployees: inputFields.totalEmployees,
     };
     if (inputFields.address2) newUser.address2 = inputFields.address2;
     if (inputFields.telephone) newUser.telephone = inputFields.telephone;
@@ -111,10 +161,16 @@ export default function CompanySignupStepper() {
   };
 
   const handleNext = () => {
+    if (activeStep === steps.length - 1) {
+      handleSignup();
+    }
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
+      if (activeStep === steps.length - 1) {
+        console.log('submit function firing OK');
+      }
     }
 
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -126,12 +182,15 @@ export default function CompanySignupStepper() {
   };
 
   const handleSkip = () => {
+    // we only allow skip of last page here
+    if (activeStep === steps.length - 1) {
+      handleSignup();
+    }
     if (!isStepOptional(activeStep)) {
       // You probably want to guard against something like this,
       // it should never occur unless someone's actively trying to break something.
       throw new Error("You can't skip a step that isn't optional.");
     }
-
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     setSkipped(prevSkipped => {
       const newSkipped = new Set(prevSkipped.values());

@@ -8,13 +8,14 @@ import Footer from './components/Footer';
 import UserSignup from './components/SignupForms/UserSignup';
 import CompanySignupStepper from './components/SignupForms/CompanySignupStepper';
 import Signin from './components/Signin';
-import Success from './components/Success';
-import Cancel from './components/Cancel';
+import SripeSuccess from './components/StripeSuccess';
+import StripeCancel from './components/StripeCancel';
 import ProfileManager from './components/ProfileManager';
 import StripePayment from './components/StripePayment';
 import AdminPage from './pages/AdminPage';
-import NewNav from './components/Navbar/NewNav';
+import CorpNav from './components/Navbar/CorpNav';
 import LandingPage from './pages/LandingPage';
+import OauthSuccess from './components/OauthSuccess';
 
 //Context Imports (may need to set the theme here if we want light/dark mode setup)
 import {useUser} from './hooks/useUser';
@@ -75,8 +76,8 @@ function App() {
               <Route path="/checkout/:projectID" element={<Checkout />} />
               <Route path="/discover" element={<DiscoverPage />} />
               <Route path="/profile" element={<ProfileManager />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/cancel" element={<Cancel />} />
+              <Route path="/success" element={<StripeSuccess />} />
+              <Route path="/cancel" element={<StripeCancel />} />
             </Routes>
             <Footer />
           </Fragment>
@@ -94,8 +95,8 @@ function App() {
               <Route path="/profile" element={<ProfileManager />} />
               <Route path="/checkout/:projectID" element={<Checkout />} />
               <Route path="checkout/stripe" element={<StripePayment />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/cancel" element={<Cancel />} />
+              <Route path="/success" element={<StripeSuccess />} />
+              <Route path="/cancel" element={<StripeCancel />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <Footer />
@@ -113,8 +114,8 @@ function App() {
               <Route path="/" element={<Navigate to="home" />} />
 
               <Route path="*" element={<NotFoundPage />} />
-              <Route path="/success" element={<Success />} />
-              <Route path="/cancel" element={<Cancel />} />
+              <Route path="/success" element={<StripeSuccess />} />
+              <Route path="/cancel" element={<StripeCancel />} />
               <Route path="/admin/dashboard" element={<AdminPage />} />
             </Routes>
             <Footer />
@@ -130,10 +131,11 @@ function App() {
             <NavBar />
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/newnav" element={<NewNav />} />
+              <Route path="/newnav" element={<CorpNav />} />
               <Route path="signup" element={<UserSignup />} />
               <Route path="company-signup" element={<CompanySignupStepper />} />
               <Route path="signin" element={<Signin />} />
+              <Route path="oauth-success" element={<OauthSuccess />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <Footer />

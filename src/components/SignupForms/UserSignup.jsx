@@ -68,10 +68,11 @@ const UserSignup = () => {
   const postNewUser = async userObj => {
     const signupResult = await fetchData('/auth/signup', 'PUT', userObj, undefined);
     console.log(signupResult);
+    navigate('/signin');
   };
 
   const handleSignup = async e => {
-    console.log('singing up function');
+    console.log('sign-up function');
     e.preventDefault();
     setSubmitting(true); //we can use this variable for the spinner
     const newUser = {

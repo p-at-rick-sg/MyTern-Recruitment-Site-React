@@ -17,7 +17,7 @@ const NameFormComponents = ({inputFields, handleChange, error, submitting}) => {
           autoFocus
           error={error.firstName}
           inputProps={{pattern: '[A-Za-z ]+'}}
-          helperText={error.firstName}
+          helperText="Invalid Input - Use Characters a-z or A-Z only"
           disabled={submitting ? true : false}
         />
       </Grid>
@@ -32,7 +32,7 @@ const NameFormComponents = ({inputFields, handleChange, error, submitting}) => {
           onChange={handleChange}
           inputProps={{pattern: '[A-Za-z ]+'}}
           error={error.lastName}
-          helperText={error.lastName}
+          helperText="Invalid Input - Use Characters a-z or A-Z only"
           autoComplete="family-name"
           disabled={submitting ? true : false}
         />

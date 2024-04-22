@@ -14,6 +14,8 @@ const EmailComponents = ({inputFields, handleChange, error, submitting}) => {
           value={inputFields.email}
           onChange={handleChange}
           autoComplete="email"
+          inputProps={{pattern: '^[^@]+@[^@]+.[^@]+$'}}
+          error={error.email}
           disabled={submitting ? true : false}
         />
       </Grid>
@@ -26,6 +28,7 @@ const EmailComponents = ({inputFields, handleChange, error, submitting}) => {
           type="email"
           id="emailCheck"
           value={inputFields.emailCheck}
+          inputProps={{pattern: '^[^@]+@[^@]+.[^@]+$'}}
           onChange={handleChange}
           disabled={submitting ? true : false}
         />

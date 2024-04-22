@@ -99,6 +99,34 @@ const Signin = () => {
     window.location.href = data.url;
   };
 
+  const getAccessToken = async () => {
+    console.log('checking for the access token');
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [key, value] = cookie.trim().split('=');
+      if (key === 'accessToken') {
+        console.log(value);
+        return value;
+      }
+    }
+    return null;
+  };
+
+  const testFunc = async () => {
+    getAccessToken();
+    testProtected();
+  };
+
+  const testProtected = async () => {
+    const result = await fetch(import.meta.env.VITE_SERVER + '/api/talent/test', {
+      method: 'GET',
+      withCredentials: true,
+      credentials: 'include',
+    });
+    const data = await result.json();
+    console.log('the result is: ', data);
+  };
+
   return (
     <>
       <Container component="main" maxWidth="xs">
@@ -163,9 +191,10 @@ const Signin = () => {
                 <Link>Forgot password?</Link>
               </Grid>
               <Grid item>
-                <Link variant="body2">
+                <Typography variant="body2">
                   <NavLink to="/signup">{"Don't have an account? Sign Up"}</NavLink>
-                </Link>
+                </Typography>
+                <Button onClick={testFunc}>TEST</Button>
               </Grid>
             </Grid>
           </Box>
