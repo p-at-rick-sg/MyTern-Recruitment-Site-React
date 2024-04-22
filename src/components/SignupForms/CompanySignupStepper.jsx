@@ -12,7 +12,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CompanySignupStep2 from './CompanySignupStep2';
-import {randomCompanyName} from '@mui/x-data-grid-generator';
+import CompanySignupStep3 from './CompanySignupStep3';
 
 const steps = ['Your Details', 'Company Details', 'Create Users'];
 
@@ -249,6 +249,16 @@ export default function CompanySignupStepper() {
           {activeStep === 1 && (
             <Fragment>
               <CompanySignupStep2
+                inputFields={inputFields}
+                handleChange={handleChange}
+                error={error}
+                submitting={submitting}
+              />
+            </Fragment>
+          )}
+          {activeStep === 2 && (
+            <Fragment>
+              <CompanySignupStep3
                 inputFields={inputFields}
                 handleChange={handleChange}
                 error={error}
