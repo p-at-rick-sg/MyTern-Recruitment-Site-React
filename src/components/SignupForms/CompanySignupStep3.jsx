@@ -18,7 +18,8 @@ const CompanySignupStep3 = ({inputFields, handleChange, error, submitting}) => {
       />
 
       <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">
-        Registered Address
+        Click Finish when you are done adding users. You can also add/remove users in account
+        settings.
       </Divider>
     </Fragment>
   );

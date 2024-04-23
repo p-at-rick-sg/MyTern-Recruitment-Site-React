@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import {NavLink, useNavigate} from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import {useUser} from '../../hooks/useUser';
@@ -42,7 +42,8 @@ const UserSignup = () => {
     address1: '',
     address2: '',
     city: '',
-    country: 'Singapore',
+    country: '',
+    countryId: 1,
     postcode: '',
     telephone: '',
     role: 'user',
@@ -51,17 +52,24 @@ const UserSignup = () => {
   });
 
   const handleChange = e => {
-    if (!e.target.validity.valid) {
-      setError({...error, [e.target.name]: true});
+    if (e.target.name === 'country') {
+      SetInputFields(prevState => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+      }));
     } else {
-      setError({...error, [e.target.name]: false});
-    }
-    SetInputFields({...inputFields, [e.target.name]: e.target.value});
-    if (inputFields.password !== inputFields.passwordCheck) {
-      setError({...error, passwordMismatch: true});
-    }
-    if (inputFields.email !== inputFields.emailCheck) {
-      setError({...error, emailMismatch: true});
+      if (!e.target.validity.valid) {
+        setError({...error, [e.target.name]: true});
+      } else {
+        setError({...error, [e.target.name]: false});
+      }
+      SetInputFields({...inputFields, [e.target.name]: e.target.value});
+      if (inputFields.password !== inputFields.passwordCheck) {
+        setError({...error, passwordMismatch: true});
+      }
+      if (inputFields.email !== inputFields.emailCheck) {
+        setError({...error, emailMismatch: true});
+      }
     }
   };
 

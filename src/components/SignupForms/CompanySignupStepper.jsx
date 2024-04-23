@@ -26,7 +26,7 @@ export default function CompanySignupStepper() {
   ]);
   const {setUser, user} = useUser(); // comes from user context
   const [submitting, setSubmitting] = useState(false);
-
+  const [userList, setUserList] = useState([]);
   const [error, setError] = useState({
     firstName: false,
     lastName: false,
@@ -64,6 +64,9 @@ export default function CompanySignupStepper() {
     companyNumber: '',
     companySector: '',
     totalEmployees: 10,
+    primaryDomain: '',
+    emailPrefix: '',
+    userList: [],
   });
 
   const validateEmailMatch = () => {
@@ -87,7 +90,6 @@ export default function CompanySignupStepper() {
   const validatePWMatch = () => {
     setError(prevState => {
       const updatedState = {...prevState}; // Make a copy of the previous state
-
       // Check if passwords match
       if (inputFields.password !== inputFields.passwordCheck) {
         updatedState.passwordMismatch = true;
@@ -109,6 +111,7 @@ export default function CompanySignupStepper() {
     if (e.target.name === 'companySector') {
       SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
     } else {
+      console.log(e.target.validity.valid);
       SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
       console.log(`setting ${e.target.name} to ${e.target.value}`);
       //checks all other fileds for valid input based on the input prop regex
@@ -131,8 +134,8 @@ export default function CompanySignupStepper() {
   };
 
   const handleSignup = async () => {
-    setSubmitting(true); //we can use this variable for the spinner
-    const newUser = {
+    setSubmitting(true);
+    const newCompany = {
       firstName: inputFields.firstName,
       lastName: inputFields.lastName,
       position: inputFields.position,
@@ -144,12 +147,24 @@ export default function CompanySignupStepper() {
       country: inputFields.country,
       postcode: inputFields.postcode,
       companySector: inputFields.companySector,
+      companyName: inputFields.companyName,
       companyNumber: inputFields.companyNumber,
       totalEmployees: inputFields.totalEmployees,
+      primaryDomain: inputFileds.primaryDomain,
+      userList: userList,
     };
     if (inputFields.address2) newUser.address2 = inputFields.address2;
     if (inputFields.telephone) newUser.telephone = inputFields.telephone;
     //call the function to handle the data part
+    const result = await postNewCompany(newCompany);
+    if (result) setSubmitting(false);
+    navigate('/signin');
+  };
+
+  const postNewCompany = async userObj => {
+    const signupResult = await fetchData('/auth/signup', 'PUT', userObj, undefined);
+    console.log(signupResult);
+    navigate('/signin');
   };
 
   const isStepOptional = step => {
@@ -263,6 +278,8 @@ export default function CompanySignupStepper() {
                 handleChange={handleChange}
                 error={error}
                 submitting={submitting}
+                userList={userList}
+                setUserList={setUserList}
               />
             </Fragment>
           )}

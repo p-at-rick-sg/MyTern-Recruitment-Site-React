@@ -1,7 +1,22 @@
+import {useRef, useEffect, useState} from 'react';
+import useFetch from '../../hooks/useFetch';
+
 //MUI Imports
-import {TextField, Grid, Typography} from '@mui/material';
+import {TextField, Grid, Select, InputLabel, MenuItem} from '@mui/material';
 
 const AddressFormComponents = ({inputFields, handleChange, error, submitting}) => {
+  const fetchData = useFetch();
+  const [countries, setCountries] = useState({});
+
+  useEffect(() => {
+    const getCountries = async () => {
+      console.log('getting countries');
+      const result = await fetchData('/api/countries', 'GET');
+      await setCountries(result.data);
+    };
+    getCountries();
+  }, []);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sm={6}>
@@ -52,20 +67,27 @@ const AddressFormComponents = ({inputFields, handleChange, error, submitting}) =
       </Grid>
       {/* TODO: Change this to a select driven by country table */}
       <Grid item xs={12} sm={6}>
-        <TextField
-          autoComplete="country"
-          name="country"
+        <InputLabel id="countriesLbl">Select Your Country</InputLabel>
+        <Select
           required
           fullWidth
           id="country"
-          label="Country"
+          name="country"
           value={inputFields.country}
-          inputProps={{pattern: '[A-Za-z ]+'}}
-          error={error.country}
-          helperText={error.country ? 'Please enter Letters Only' : ''}
           onChange={handleChange}
-          disabled={submitting ? true : false}
-        />
+          disabled={submitting ? true : false}>
+          {countries && countries.length > 0 ? (
+            countries.map(country => (
+              <MenuItem key={country.id} value={country}>
+                {country.name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem key="0" value="loading">
+              Loading
+            </MenuItem>
+          )}
+        </Select>
       </Grid>
       <Grid item xs={12} sm={6}>
         <TextField
