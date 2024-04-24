@@ -58,6 +58,7 @@ const UserSignup = () => {
         ...prevState,
         [e.target.name]: e.target.value,
       }));
+      console.log('country: ', country);
     } else {
       if (!e.target.validity.valid) {
         setError({...error, [e.target.name]: true});

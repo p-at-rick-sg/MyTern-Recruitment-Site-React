@@ -1,5 +1,7 @@
 import {useState, Fragment} from 'react';
 import {useUser} from '../../hooks/useUser';
+import useFetch from '../../hooks/useFetch';
+import {useNavigate} from 'react-router-dom';
 
 //Componenet Imports
 import CompanySignupStep1 from './CompanySignupStep1';
@@ -12,18 +14,16 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CompanySignupStep2 from './CompanySignupStep2';
-import CompanySignupStep3 from './CompanySignupStep3';
+// import CompanySignupStep3 from './CompanySignupStep3';
 
-const steps = ['Your Details', 'Company Details', 'Create Users'];
+const steps = ['Your Details', 'Company Details'];
 
 export default function CompanySignupStepper() {
+  const fetchData = useFetch();
+  const navigate = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
-  const [activeStepName, setActiveStepName] = useState([
-    'Your Details',
-    'Company Details',
-    'Add Users',
-  ]);
+  const [activeStepName, setActiveStepName] = useState(['Your Details', 'Company Details']);
   const {setUser, user} = useUser(); // comes from user context
   const [submitting, setSubmitting] = useState(false);
   const [emailList, setEmailList] = useState([]);
@@ -65,8 +65,6 @@ export default function CompanySignupStepper() {
     companySector: '',
     totalEmployees: 10,
     primaryDomain: '',
-    emailPrefix: '',
-    emailList: [],
   });
 
   const handlePasswordMatch = () => {
@@ -114,8 +112,9 @@ export default function CompanySignupStepper() {
   };
 
   const handleSignup = async () => {
-    if (checkErrors(error)) {
+    if (!checkErrors(error)) {
       setSubmitting(true);
+      const primaryDomain = inputFields.email.split('@')[1];
       const newCompany = {
         firstName: inputFields.firstName,
         lastName: inputFields.lastName,
@@ -125,17 +124,16 @@ export default function CompanySignupStepper() {
         password: inputFields.password,
         address1: inputFields.address1,
         city: inputFields.city,
-        country: inputFields.country, //this is now an object with name, id to save alookpu on the backend
+        country: inputFields.country,
         postcode: inputFields.postcode,
         companySector: inputFields.companySector,
         companyName: inputFields.companyName,
         companyNumber: inputFields.companyNumber,
         totalEmployees: inputFields.totalEmployees,
-        primaryDomain: inputFields.primaryDomain,
-        emailList: emailList,
+        primaryDomain: primaryDomain,
       };
-      if (inputFields.address2) newUser.address2 = inputFields.address2;
-      if (inputFields.telephone) newUser.telephone = inputFields.telephone;
+      if (inputFields.address2) newCompany.address2 = inputFields.address2;
+      if (inputFields.telephone) newCompany.telephone = inputFields.telephone;
       //call the function to handle the data part
       const result = await postNewCompany(newCompany);
       if (result) setSubmitting(false);
@@ -147,13 +145,13 @@ export default function CompanySignupStepper() {
   };
 
   const postNewCompany = async userObj => {
-    const signupResult = await fetchData('/auth/signup', 'PUT', userObj, undefined);
+    const signupResult = await fetchData('/auth/company-signup', 'PUT', userObj, undefined);
     console.log(signupResult);
     navigate('/signin');
   };
 
   const isStepOptional = step => {
-    return step === 2;
+    return; // step === 2;
   };
 
   const isStepSkipped = step => {
@@ -205,7 +203,7 @@ export default function CompanySignupStepper() {
 
   return (
     <Box sx={{width: '80%', margin: 'auto'}}>
-      <Stepper activeStep={activeStep}>
+      <Stepper activeStep={activeStep} sx={{mt: '20px'}}>
         {steps.map((label, index) => {
           const stepProps = {};
           const labelProps = {};
@@ -258,7 +256,7 @@ export default function CompanySignupStepper() {
               />
             </Fragment>
           )}
-          {activeStep === 2 && (
+          {/* {activeStep === 2 && (
             <Fragment>
               <CompanySignupStep3
                 inputFields={inputFields}
@@ -269,7 +267,7 @@ export default function CompanySignupStepper() {
                 setEmailList={setEmailList}
               />
             </Fragment>
-          )}
+          )} */}
           <Box sx={{display: 'flex', flexDirection: 'row', pt: 2}}>
             <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{mr: 1}}>
               Back

@@ -95,7 +95,7 @@ const AddressFormComponents = ({inputFields, handleChange, error, submitting}) =
           id="postcode"
           label="Postcode/Zip Code"
           name="postcode"
-          inputProps={{pattern: '[A-Za-z0-9]+'}}
+          inputProps={{pattern: '[A-Za-z0-9 ]+'}}
           error={error.postcode}
           helperText={error.postcode ? 'Please enter Letters and Numbers Only' : ''}
           value={inputFields.postcode}
