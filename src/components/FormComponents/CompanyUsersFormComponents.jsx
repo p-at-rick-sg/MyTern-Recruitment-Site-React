@@ -24,22 +24,21 @@ const CompanyUsersFormComponents = ({
   handleChange,
   error,
   submitting,
-  userList,
-  setUserList,
+  emailList,
+  setEmailList,
 }) => {
-  // const prefix = /^[a-zA-Z0-9\-\.]+$/;
-  // const suffix = /^@[a-zA-Z0-9\-\.]+$/; these don;t work in node but they do in regex101!
   const addEmailToList = () => {
     const newEmail = `${inputFields.emailPrefix}@${inputFields.primaryDomain}`;
     console.log(newEmail);
+    console.log(emailList);
     if (validator.validate(newEmail)) {
       //check if already in the list
-      if (userList.includes(newEmail)) {
+      if (emailList.includes(newEmail)) {
         console.log('already in the list');
         pass;
       } else {
         //add email to the list array
-        setUserList([...userList, newEmail]);
+        setEmailList([...emailList, newEmail]);
         inputFields.emailPrefix = '';
       }
     }
@@ -83,27 +82,32 @@ const CompanyUsersFormComponents = ({
           error={error.primaryDomain}
           inputProps={{pattern: '[A-Za-z.-]+'}}
           helperText="Enter Domain exluding the @ - must be the same for all users added"
-          disabled={submitting || userList.length > 0 ? true : false}
+          disabled={submitting ? true : false}
         />
       </Grid>
       <Grid item xs={12} sm={6}>
         <List dense={true}>
-          {userList.map((email, index) => (
-            <ListItem
-              key={index}
-              secondaryAction={
-                <IconButton edge="end" aria-label="delete" id={index} onClick={removeEmailFromList}>
-                  <PersonRemoveIcon />
-                </IconButton>
-              }>
-              <ListItemAvatar>
-                <Avatar>
-                  <PersonAddAltIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={email} />
-            </ListItem>
-          ))}
+          {emailList &&
+            emailList.map((email, index) => (
+              <ListItem
+                key={index}
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    id={index}
+                    onClick={removeEmailFromList}>
+                    <PersonRemoveIcon />
+                  </IconButton>
+                }>
+                <ListItemAvatar>
+                  <Avatar>
+                    <PersonAddAltIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={email} />
+              </ListItem>
+            ))}
         </List>
       </Grid>
       <Grid item>

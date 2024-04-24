@@ -4,7 +4,14 @@ import {Fragment} from 'react';
 import {Divider} from '@mui/material';
 import CompanyUsersFormComponents from '../FormComponents/CompanyUsersFormComponents';
 
-const CompanySignupStep3 = ({inputFields, handleChange, error, submitting}) => {
+const CompanySignupStep3 = ({
+  inputFields,
+  handleChange,
+  error,
+  submitting,
+  emailList,
+  setEmailList,
+}) => {
   return (
     <Fragment>
       <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">
@@ -15,6 +22,8 @@ const CompanySignupStep3 = ({inputFields, handleChange, error, submitting}) => {
         handleChange={handleChange}
         error={error}
         submitting={submitting}
+        emailList={emailList}
+        setEmailList={setEmailList}
       />
 
       <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">

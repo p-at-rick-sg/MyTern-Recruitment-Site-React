@@ -1,6 +1,6 @@
 import {TextField, Grid, Typography} from '@mui/material';
 
-const PasswordComponents = ({inputFields, handleChange, error, submitting}) => {
+const PasswordComponents = ({inputFields, handleChange, error, submitting, handleMatch}) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -13,6 +13,7 @@ const PasswordComponents = ({inputFields, handleChange, error, submitting}) => {
           id="password"
           value={inputFields.password}
           onChange={handleChange}
+          onBlur={handleMatch}
           autoComplete="new-password"
           disabled={submitting ? true : false}
         />
@@ -27,6 +28,7 @@ const PasswordComponents = ({inputFields, handleChange, error, submitting}) => {
           id="passwordCheck"
           value={inputFields.passwordCheck}
           onChange={handleChange}
+          onBlur={handleMatch}
           autoComplete="new-password"
           disabled={submitting ? true : false}
         />

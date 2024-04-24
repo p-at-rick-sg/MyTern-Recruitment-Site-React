@@ -10,10 +10,9 @@ const CompanyInfoComponents = ({inputFields, handleChange, error, submitting}) =
   //get the sectors from the database need a new API
 
   useEffect(() => {
-    console.log('fetch outer func');
     const innerFunc = async () => {
       try {
-        console.log('trying to fetch the sectors');
+        console.log('fetching sectors');
         const response = await fetchData('/api/sectors', 'get');
         console.log('here is the response for sector: ', response);
         setSectors(response.data);
@@ -91,8 +90,8 @@ const CompanyInfoComponents = ({inputFields, handleChange, error, submitting}) =
           disabled={submitting ? true : false}>
           {sectors &&
             sectors.map(sector => (
-              <MenuItem key={sector} value={sector}>
-                {sector}
+              <MenuItem key={sector.id} value={sector}>
+                {sector.sector}
               </MenuItem>
             ))}
         </Select>

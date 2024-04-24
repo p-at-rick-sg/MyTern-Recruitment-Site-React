@@ -7,7 +7,14 @@ import PasswordComponents from '../FormComponents/PasswordComponents';
 //MUI Imports
 import {Divider} from '@mui/material';
 
-const CompanySignupStep1 = ({inputFields, handleChange, error, submitting}) => {
+const CompanySignupStep1 = ({
+  inputFields,
+  handleChange,
+  error,
+  submitting,
+  handleEmailMatch,
+  handlePasswordMatch,
+}) => {
   return (
     <Fragment>
       <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">
@@ -36,15 +43,25 @@ const CompanySignupStep1 = ({inputFields, handleChange, error, submitting}) => {
         handleChange={handleChange}
         error={error}
         submitting={submitting}
+        handleMatch={handleEmailMatch}
       />
-      <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">
-        Choose a Complex Password
-      </Divider>
+
+      {error.passwordMismatch && error.passwordMismatch ? (
+        <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'red'}} textAlign="center">
+          Password's Don't Match
+        </Divider>
+      ) : (
+        <Divider flexItem={true} sx={{mt: '15px', mb: '15px', color: 'grey'}} textAlign="center">
+          Choose a Complex Password
+        </Divider>
+      )}
+
       <PasswordComponents
         inputFields={inputFields}
         handleChange={handleChange}
         error={error}
         submitting={submitting}
+        handleMatch={handlePasswordMatch}
       />
     </Fragment>
   );

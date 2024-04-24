@@ -9,7 +9,7 @@ import NameFormComponents from '../FormComponents/NameFormComponents';
 import PasswordComponents from '../FormComponents/PasswordComponents';
 
 //MUI Imports
-import {Box, Button, Container, Divider, Link, Typography} from '@mui/material';
+import {Box, Container, Divider, Typography} from '@mui/material';
 import SubmitButtonsComponents from '../FormComponents/SubmitButtonsComponents';
 import EmailComponents from '../FormComponents/EmailComponents';
 
@@ -31,6 +31,7 @@ const UserSignup = () => {
     emailMismatch: false,
     emailExists: false,
     password: false,
+    passwordCheck: false,
     passwordMismatch: false,
   });
 
@@ -64,12 +65,24 @@ const UserSignup = () => {
         setError({...error, [e.target.name]: false});
       }
       SetInputFields({...inputFields, [e.target.name]: e.target.value});
-      if (inputFields.password !== inputFields.passwordCheck) {
-        setError({...error, passwordMismatch: true});
-      }
-      if (inputFields.email !== inputFields.emailCheck) {
-        setError({...error, emailMismatch: true});
-      }
+    }
+  };
+
+  const handlePasswordMatch = () => {
+    console.log('pw match blur');
+    if (inputFields.password !== inputFields.passwordCheck) {
+      setError({...error, passwordMismatch: true});
+    } else {
+      setError({...error, passwordMismatch: false});
+    }
+  };
+
+  const handleEmailMatch = () => {
+    console.log('email match blur');
+    if (inputFields.email !== inputFields.emailCheck) {
+      setError({...error, emailMismatch: true});
+    } else {
+      setError({...error, emailMismatch: false});
     }
   };
 
@@ -79,27 +92,43 @@ const UserSignup = () => {
     navigate('/signin');
   };
 
+  const checkErrors = obj => {
+    const testResult = Object.values(obj);
+    if (true in testResult) {
+      return true;
+    } else return false;
+  };
+
   const handleSignup = async e => {
     console.log('sign-up function');
     e.preventDefault();
-    setSubmitting(true); //we can use this variable for the spinner
-    const newUser = {
-      firstName: inputFields.firstName,
-      lastName: inputFields.lastName,
-      email: inputFields.email,
-      password: inputFields.password,
-      address1: inputFields.address1,
-      city: inputFields.city,
-      country: inputFields.country,
-      postcode: inputFields.postcode,
-    };
-    if (inputFields.address2) newUser.address2 = inputFields.address2;
-    if (inputFields.telephone) newUser.telephone = inputFields.telephone;
-    console.log(newUser);
-    //call the function to handle the data part
-    const result = await postNewUser(newUser);
-    if (result) setSubmitting(false);
-    navigate('/signin');
+    if (!checkErrors(error)) {
+      setSubmitting(true); //we can use this variable for the spinner
+      const newUser = {
+        firstName: inputFields.firstName,
+        lastName: inputFields.lastName,
+        email: inputFields.email,
+        password: inputFields.password,
+        address1: inputFields.address1,
+        city: inputFields.city,
+        country: inputFields.country,
+        postcode: inputFields.postcode,
+      };
+      if (inputFields.address2) newUser.address2 = inputFields.address2;
+      if (inputFields.telephone) newUser.telephone = inputFields.telephone;
+      console.log(newUser);
+      //call the function to handle the data part
+      const result = await postNewUser(newUser);
+      if (result.ok) {
+        setSubmitting(false);
+        navigate('/signin');
+      } else {
+        console.error('tried to submit but retuned an error');
+      }
+    } else {
+      console.error('errors in form');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -121,9 +150,16 @@ const UserSignup = () => {
             error={error}
             submitting={submitting}
           />
+          {error.emailMismatch && (
+            <Divider flexItem={true} sx={{mt: '10px', mb: '15px', color: 'red'}} textAlign="center">
+              Email's Don't Match
+            </Divider>
+          )}
+
           <EmailComponents
             inputFields={inputFields}
             handleChange={handleChange}
+            handleMatch={handleEmailMatch}
             error={error}
             submitting={submitting}
           />
@@ -136,20 +172,27 @@ const UserSignup = () => {
             error={error}
             submitting={submitting}
           />
-          <Divider flexItem={true} sx={{mt: '15px', color: 'grey'}} textAlign="center">
-            Set Password
-          </Divider>
+          {error.passwordMismatch ? (
+            <Divider flexItem={true} sx={{mt: '15px', mb: '10px', color: 'red'}} textAlign="center">
+              Password's Don't Match
+            </Divider>
+          ) : (
+            <Divider
+              flexItem={true}
+              sx={{mt: '15px', mb: '10px', color: 'grey'}}
+              textAlign="center">
+              Set a Strong Password
+            </Divider>
+          )}
           <PasswordComponents
             inputFields={inputFields}
             handleChange={handleChange}
+            handleMatch={handlePasswordMatch}
             error={error}
             submitting={submitting}
           />
-          <Divider flexItem={true} sx={{mt: '15px', mb: '10px', color: 'grey'}} textAlign="center">
-            Submit When Ready
-          </Divider>
           <SubmitButtonsComponents handleSubmit={handleSignup} />
-          <Typography variant="button" display="block" sx={{color: '#64B5F6'}}>
+          <Typography variant="button" display="block" sx={{color: '#64B5F6', mt: '-25px'}}>
             <NavLink to="/signin">Already have an account: Sign In</NavLink>
           </Typography>
         </Box>

@@ -26,7 +26,7 @@ export default function CompanySignupStepper() {
   ]);
   const {setUser, user} = useUser(); // comes from user context
   const [submitting, setSubmitting] = useState(false);
-  const [userList, setUserList] = useState([]);
+  const [emailList, setEmailList] = useState([]);
   const [error, setError] = useState({
     firstName: false,
     lastName: false,
@@ -54,7 +54,7 @@ export default function CompanySignupStepper() {
     address1: '',
     address2: '',
     city: '',
-    country: 'Singapore',
+    country: '',
     postcode: '',
     telephone: '',
     role: 'user',
@@ -66,54 +66,35 @@ export default function CompanySignupStepper() {
     totalEmployees: 10,
     primaryDomain: '',
     emailPrefix: '',
-    userList: [],
+    emailList: [],
   });
 
-  const validateEmailMatch = () => {
-    setError(prevState => {
-      const updatedState = {...prevState}; // Make a copy of the previous state
-
-      // Check if emails match
-      if (inputFields.email !== inputFields.emailCheck) {
-        updatedState.emailMismatch = true;
-        updatedState.email = true;
-        updatedState.emailCheck = true;
-      } else {
-        updatedState.emailMismatch = false;
-        updatedState.email = false;
-        updatedState.emailCheck = false;
-      }
-      return updatedState; // Return the updated state
-    });
+  const handlePasswordMatch = () => {
+    console.log('pw match blur');
+    if (inputFields.password !== inputFields.passwordCheck) {
+      setError({...error, passwordMismatch: true});
+    } else {
+      setError({...error, passwordMismatch: false});
+    }
   };
 
-  const validatePWMatch = () => {
-    setError(prevState => {
-      const updatedState = {...prevState}; // Make a copy of the previous state
-      // Check if passwords match
-      if (inputFields.password !== inputFields.passwordCheck) {
-        updatedState.passwordMismatch = true;
-        updatedState.password = true;
-        updatedState.passwordCheck = true;
-      } else {
-        updatedState.passwordMismatch = false;
-        updatedState.password = false;
-        updatedState.passwordCheck = false;
-      }
-
-      return updatedState; // Return the updated state
-    });
+  const handleEmailMatch = () => {
+    console.log('email match blur');
+    if (inputFields.email !== inputFields.emailCheck) {
+      setError({...error, emailMismatch: true});
+    } else {
+      setError({...error, emailMismatch: false});
+    }
   };
 
   const handleChange = e => {
     console.log(e.target.name);
-    //handles the comapy sector field only
-    if (e.target.name === 'companySector') {
+    //handles the sector and counry as they don;t have a .valid attribute
+    if (e.target.name === 'companySector' || e.target.name === 'country') {
       SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
     } else {
-      console.log(e.target.validity.valid);
       SetInputFields(prevState => ({...prevState, [e.target.name]: e.target.value}));
-      console.log(`setting ${e.target.name} to ${e.target.value}`);
+      console.log(`setting ${e.target.name} to ${e.target.value}`); //troubleshooting
       //checks all other fileds for valid input based on the input prop regex
       if (!e.target.validity.valid) {
         console.log(`setting ${e.target.name} error to true`);
@@ -122,43 +103,47 @@ export default function CompanySignupStepper() {
         console.log(`setting ${e.target.name} error to false`);
         setError(prevState => ({...prevState, [e.target.name]: false}));
       }
-      // check the matching passwords
-      if (e.target.name === 'passwordCheck') {
-        validatePWMatch();
-      }
-      //check the matching emails
-      if (e.target.name === 'emailCheck') {
-        validateEmailMatch();
-      }
     }
   };
 
+  const checkErrors = obj => {
+    const testResult = Object.values(obj);
+    if (true in testResult) {
+      return true;
+    } else return false;
+  };
+
   const handleSignup = async () => {
-    setSubmitting(true);
-    const newCompany = {
-      firstName: inputFields.firstName,
-      lastName: inputFields.lastName,
-      position: inputFields.position,
-      useCase: inputFields.useCase,
-      email: inputFields.email,
-      password: inputFields.password,
-      address1: inputFields.address1,
-      city: inputFields.city,
-      country: inputFields.country,
-      postcode: inputFields.postcode,
-      companySector: inputFields.companySector,
-      companyName: inputFields.companyName,
-      companyNumber: inputFields.companyNumber,
-      totalEmployees: inputFields.totalEmployees,
-      primaryDomain: inputFileds.primaryDomain,
-      userList: userList,
-    };
-    if (inputFields.address2) newUser.address2 = inputFields.address2;
-    if (inputFields.telephone) newUser.telephone = inputFields.telephone;
-    //call the function to handle the data part
-    const result = await postNewCompany(newCompany);
-    if (result) setSubmitting(false);
-    navigate('/signin');
+    if (checkErrors(error)) {
+      setSubmitting(true);
+      const newCompany = {
+        firstName: inputFields.firstName,
+        lastName: inputFields.lastName,
+        position: inputFields.position,
+        useCase: inputFields.useCase,
+        email: inputFields.email,
+        password: inputFields.password,
+        address1: inputFields.address1,
+        city: inputFields.city,
+        country: inputFields.country, //this is now an object with name, id to save alookpu on the backend
+        postcode: inputFields.postcode,
+        companySector: inputFields.companySector,
+        companyName: inputFields.companyName,
+        companyNumber: inputFields.companyNumber,
+        totalEmployees: inputFields.totalEmployees,
+        primaryDomain: inputFields.primaryDomain,
+        emailList: emailList,
+      };
+      if (inputFields.address2) newUser.address2 = inputFields.address2;
+      if (inputFields.telephone) newUser.telephone = inputFields.telephone;
+      //call the function to handle the data part
+      const result = await postNewCompany(newCompany);
+      if (result) setSubmitting(false);
+      navigate('/signin');
+    } else {
+      console.error('errors on form - cannot submit now');
+      setSubmitting(false);
+    }
   };
 
   const postNewCompany = async userObj => {
@@ -258,6 +243,8 @@ export default function CompanySignupStepper() {
                 handleChange={handleChange}
                 error={error}
                 submitting={submitting}
+                handleEmailMatch={handleEmailMatch}
+                handlePasswordMatch={handlePasswordMatch}
               />
             </Fragment>
           )}
@@ -278,8 +265,8 @@ export default function CompanySignupStepper() {
                 handleChange={handleChange}
                 error={error}
                 submitting={submitting}
-                userList={userList}
-                setUserList={setUserList}
+                emailList={emailList}
+                setEmailList={setEmailList}
               />
             </Fragment>
           )}
