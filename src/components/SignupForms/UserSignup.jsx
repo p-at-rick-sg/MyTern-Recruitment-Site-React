@@ -90,7 +90,9 @@ const UserSignup = () => {
   const postNewUser = async userObj => {
     const signupResult = await fetchData('/auth/signup', 'PUT', userObj, undefined);
     console.log(signupResult);
-    navigate('/signin');
+    if (signupResult) {
+      return true;
+    } else return false;
   };
 
   const checkErrors = obj => {
@@ -120,11 +122,12 @@ const UserSignup = () => {
       console.log(newUser);
       //call the function to handle the data part
       const result = await postNewUser(newUser);
-      if (result.ok) {
+      if (result) {
         setSubmitting(false);
         navigate('/signin');
       } else {
         console.error('tried to submit but retuned an error');
+        setSubmitting(false);
       }
     } else {
       console.error('errors in form');

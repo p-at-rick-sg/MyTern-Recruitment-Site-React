@@ -19,8 +19,6 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
-// Component Imports
-
 const Signin = () => {
   const fetchData = useFetch();
   const {user, setUser} = useUser(); // comes from user context
@@ -29,62 +27,43 @@ const Signin = () => {
   const [failed, setFailed] = useState(false);
   const navigate = useNavigate();
 
-  //check logged in session data and bypass login if exists
-  const checkSession = () => {
-    console.log('checking session');
-    if (sessionStorage.getItem('access') !== null) {
-      console.log('data in session storage, bypassing login');
-      const sessionAccess = sessionStorage.getItem('access');
-      const type = sessionStorage.getItem('type');
-      setUser({...user, accessToken: sessionAccess, type: type});
-      if (type !== 'user') {
-        navigate('/member');
-      } else {
-        navigate('/');
-      }
-    }
-  };
+  // //check logged in session data and bypass login if exists
+  // const checkSession = () => {
+  //   console.log('checking session');
+  //   if (sessionStorage.getItem('access') !== null) {
+  //     console.log('data in session storage, bypassing login');
+  //     const sessionAccess = sessionStorage.getItem('access');
+  //     const type = sessionStorage.getItem('type');
+  //     setUser({...user, accessToken: sessionAccess, type: type});
+  //     if (type !== 'user') {
+  //       navigate('/member');
+  //     } else {
+  //       navigate('/');
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    checkSession();
-  }, []);
+  // useEffect(() => {
+  //   checkSession();
+  // }, []);
 
   const handleSignin = async e => {
     e.preventDefault();
-    setSubmitting(true); //we can use this variable for the spinner
-    const result = await fetchData('/auth/signin', 'POST', {
-      email: credentials.email,
-      password: credentials.password,
+    setSubmitting(true);
+    const tmpObj = credentials;
+
+    const res = await fetch(import.meta.env.VITE_SERVER + '/auth/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tmpObj),
+      credentials: 'include',
     });
-    console.log('here is what the API returns: ', result);
-    if (result.ok) {
-      localStorage.setItem('refresh', result.data.refresh); //set the refresh in local storage
-      const decodedClaims = jwtDecode(result.data.access); //decode the access token
-      setUser({
-        ...user,
-        type: decodedClaims.type,
-        accessToken: result.data.access,
-        id: result.data.id,
-      });
-      sessionStorage.setItem('access', result.data.access);
-      sessionStorage.setItem('type', decodedClaims.type);
-      sessionStorage.setItem('id', decodedClaims.id);
-      setSubmitting(false);
-      if (decodedClaims.role === 'contributor') {
-        navigate('/member');
-      } else {
-        navigate('/');
-      }
-    } else {
-      //login has failed for some reason
-      console.error('failed login attempt');
-      setFailed(true);
-      setTimeout(() => {
-        setFailed(false);
-      }, 3000);
-      setCredentials({...credentials, password: ''});
-      setSubmitting(false);
-    }
+    const data = await res.json();
+    console.log(data);
+    setSubmitting(false);
+    navigate('/oauth-success');
   };
 
   const handleChange = e => {
@@ -99,28 +78,13 @@ const Signin = () => {
     window.location.href = data.url;
   };
 
-  const getAccessToken = async () => {
-    console.log('checking for the access token');
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const [key, value] = cookie.trim().split('=');
-      if (key === 'accessToken') {
-        console.log(value);
-        return value;
-      }
-    }
-    return null;
-  };
-
   const testFunc = async () => {
-    getAccessToken();
     testProtected();
   };
 
   const testProtected = async () => {
     const result = await fetch(import.meta.env.VITE_SERVER + '/api/talent/test', {
       method: 'GET',
-      withCredentials: true,
       credentials: 'include',
     });
     const data = await result.json();
