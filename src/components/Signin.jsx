@@ -61,7 +61,6 @@ const Signin = () => {
       credentials: 'include',
     });
     const data = await res.json();
-    console.log(data);
     setSubmitting(false);
     navigate('/oauth-success');
   };

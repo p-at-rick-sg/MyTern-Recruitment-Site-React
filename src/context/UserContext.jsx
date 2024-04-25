@@ -1,6 +1,4 @@
-import {createContext, useEffect, useState} from 'react';
-
-import {createTheme} from '@mui/material';
+import {createContext, useState, useRef} from 'react';
 
 export const UserContext = createContext();
 export function UserProvider({children}) {
@@ -8,23 +6,33 @@ export function UserProvider({children}) {
 
   const [pageTitle, setPageTitle] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+
   const [user, setUser] = useState({
-    accessToken: null,
-    email: null,
-    firstName: null,
-    lastName: null,
-    role: null,
-    createdDate: null,
-    id: null,
+    email: 'test',
+    firstName: 'first',
+    role: 'none',
+    type: 'none',
+    exp: 'not set',
   });
 
-  const checkSession = async () => {
-    if (sessionStorage.getItem('access') !== null) {
-      const sessionAccess = await sessionStorage.getItem('access');
-      const role = await sessionStorage.getItem('role');
-      const id = await sessionStorage.getItem('id');
-      await setUser({...user, accessToken: sessionAccess, role: role, id: id});
+  const updateUser = async newUserObj => {
+    try {
+      await setUser(prevUser => ({...prevUser, ...newUserObj})); // Merge new data
+    } catch (err) {
+      console.error('updaing user state failed: ', err);
     }
+  };
+
+  const checkRemaining = expires => {
+    var d = new Date();
+    var seconds = Math.round(d.getTime() / 1000);
+    const remainingSecs = expires - seconds;
+    console.log('Remaining Seconds', remainingSecs);
+  };
+
+  const checkSession = async () => {
+    //check the context state user
+    console.log();
   };
 
   const logout = () => {
@@ -32,13 +40,11 @@ export function UserProvider({children}) {
     sessionStorage.clear('access');
     sessionStorage.clear('role');
     setUser({
-      accessToken: null,
       email: null,
       firstName: null,
-      lastName: null,
       role: null,
-      createdDate: null,
-      id: null,
+      type: null,
+      exp: null,
     });
   };
 
@@ -49,7 +55,7 @@ export function UserProvider({children}) {
     authenticated,
     setAuthenticated,
     user,
-    setUser,
+    updateUser,
     logout,
     checkSession,
   };

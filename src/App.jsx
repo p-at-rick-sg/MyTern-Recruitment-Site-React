@@ -63,7 +63,7 @@ function App() {
     checkSession();
   }, []);
 
-  if (user.role === 'contributor') {
+  if (user.role === 'user') {
     return (
       <ThemeProvider theme={userTheme}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -71,53 +71,13 @@ function App() {
             <NavBar />
             <Routes>
               <Route path="/" element={<Navigate to="home" />} />
-              <Route path="*" element={<NotFoundPage />} />
-              <Route path="/member" element={<MemberPage />} />
-              <Route path="/member/add" element={<AddProject />} />
-              <Route path="/checkout/:projectID" element={<Checkout />} />
-              <Route path="/discover" element={<DiscoverPage />} />
-              <Route path="/profile" element={<ProfileManager />} />
-              <Route path="/success" element={<StripeSuccess />} />
-              <Route path="/cancel" element={<StripeCancel />} />
-            </Routes>
-            <Footer />
-          </Fragment>
-        </LocalizationProvider>
-      </ThemeProvider>
-    );
-  } else if (user.role === 'user') {
-    return (
-      <ThemeProvider theme={userTheme}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Fragment>
-            <NavBar />
-            <Routes>
-              <Route path="/" element={<Navigate to="home" />} />
+              <Route path="/home" element={<LandingPage />} />
               <Route path="/profile" element={<ProfileManager />} />
               <Route path="/checkout/:projectID" element={<Checkout />} />
               <Route path="checkout/stripe" element={<StripePayment />} />
               <Route path="/success" element={<StripeSuccess />} />
               <Route path="/cancel" element={<StripeCancel />} />
               <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-            <Footer />
-          </Fragment>
-        </LocalizationProvider>
-      </ThemeProvider>
-    );
-  } else if (user.role === 'admin') {
-    return (
-      <ThemeProvider theme={userTheme}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Fragment>
-            <NavBar />
-            <Routes>
-              <Route path="/" element={<Navigate to="home" />} />
-
-              <Route path="*" element={<NotFoundPage />} />
-              <Route path="/success" element={<StripeSuccess />} />
-              <Route path="/cancel" element={<StripeCancel />} />
-              <Route path="/admin/dashboard" element={<AdminPage />} />
             </Routes>
             <Footer />
           </Fragment>

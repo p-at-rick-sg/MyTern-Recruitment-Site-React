@@ -1,26 +1,43 @@
-import {useState, useEffect} from 'react';
-
+import {useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 //Context
 import {useUser} from '../hooks/useUser';
 
 const OauthSuccess = () => {
-  const {user, setUser} = useUser;
-
-  //Page to accept the header tokens and set the context to render the pages we need - changed security options on BE to make this work for now
-
+  const {updateUser, user} = useUser();
+  const navigate = useNavigate();
   useEffect(() => {
-    testProtected();
+    //add logic here to check user object for this
+    whoAmI();
   }, []);
 
-  const testProtected = async () => {
-    const result = await fetch(import.meta.env.VITE_SERVER + '/api/talent/test', {
+  // const testProtected = async () => {
+  //   const result = await fetch(import.meta.env.VITE_SERVER + '/api/talent/test', {
+  //     method: 'GET',
+  //     withCredentials: true,
+  //     credentials: 'include',
+  //   });
+  //   const data = await result.json();
+  //   console.log('the result is: ', data);
+  // };
+
+  const whoAmI = async () => {
+    // here we always fetch and set for simplicity as this is the first page we hit
+    const result = await fetch(import.meta.env.VITE_SERVER + '/api/sec/whoami', {
       method: 'GET',
       withCredentials: true,
       credentials: 'include',
     });
     const data = await result.json();
-    console.log('the result is: ', data);
+    await updateUser(data);
   };
+
+  useEffect(() => {
+    console.log(user);
+    if (user.type === 'user') {
+      navigate('/');
+    }
+  }, [user]);
 
   return <div>Oauth Signin Success</div>;
 };
