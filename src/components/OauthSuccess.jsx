@@ -7,7 +7,7 @@ const OauthSuccess = () => {
   const {updateUser, user} = useUser();
   const navigate = useNavigate();
   useEffect(() => {
-    //add logic here to check user object for this
+    // TODO: add logic here to check user object for this before calling
     whoAmI();
   }, []);
 
@@ -35,6 +35,9 @@ const OauthSuccess = () => {
   useEffect(() => {
     console.log(user);
     if (user.type === 'user') {
+      navigate('/');
+    }
+    if (user.type === 'corp') {
       navigate('/');
     }
   }, [user]);

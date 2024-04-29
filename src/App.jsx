@@ -1,4 +1,4 @@
-import {useEffect, Fragment} from 'react';
+import {useEffect, Fragment, useState} from 'react';
 import {Route, Routes, Navigate, NavLink} from 'react-router-dom';
 
 ///Component Imports
@@ -6,6 +6,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import UserSignup from './components/SignupForms/UserSignup';
+import UserPage from './pages/UserPage';
 import CompanySignupStepper from './components/SignupForms/CompanySignupStepper';
 import Signin from './components/Signin';
 import SripeSuccess from './components/StripeSuccess';
@@ -16,17 +17,16 @@ import AdminPage from './pages/AdminPage';
 import CorpNav from './components/Navbar/CorpNav';
 import LandingPage from './pages/LandingPage';
 import OauthSuccess from './components/OauthSuccess';
-import CompanyUsersFormComponents from './components/FormComponents/CompanyUsersFormComponents';
 
 //Context Imports (may need to set the theme here if we want light/dark mode setup)
 import {useUser} from './hooks/useUser';
 //MUI Stuff
 //Create the theme and apply it around the whole app
-import {createTheme, ThemeProvider} from '@mui/material';
+import {createTheme, CssBaseline, ThemeProvider, responsiveFontSizes} from '@mui/material';
 import {LocalizationProvider} from '@mui/x-date-pickers';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 
-const userTheme = createTheme({
+let userTheme = createTheme({
   palette: {
     primary: {
       main: '#2979FF',
@@ -55,6 +55,7 @@ const userTheme = createTheme({
     },
   },
 });
+userTheme = responsiveFontSizes(userTheme);
 
 function App() {
   const {user, checkSession} = useUser();
@@ -64,14 +65,17 @@ function App() {
   }, []);
 
   if (user.role === 'user') {
+    //There are the talent signedin routes
     return (
       <ThemeProvider theme={userTheme}>
+        <CssBaseline />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Fragment>
             <NavBar />
             <Routes>
-              <Route path="/" element={<Navigate to="home" />} />
+              <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<LandingPage />} />
+              <Route path="/user" element={<UserPage />} />
               <Route path="/profile" element={<ProfileManager />} />
               <Route path="/checkout/:projectID" element={<Checkout />} />
               <Route path="checkout/stripe" element={<StripePayment />} />
@@ -85,13 +89,17 @@ function App() {
       </ThemeProvider>
     );
   } else {
+    // These are the default logged out routes
     return (
       <ThemeProvider theme={userTheme}>
+        <CssBaseline />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Fragment>
             <NavBar />
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route path="/home" element={<LandingPage />} />
+              <Route path="/user" element={<UserPage />} />
               <Route path="/newnav" element={<CorpNav />} />
               <Route path="signup" element={<UserSignup />} />
               <Route path="company-signup" element={<CompanySignupStepper />} />

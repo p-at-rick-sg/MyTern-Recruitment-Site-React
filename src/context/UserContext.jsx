@@ -17,7 +17,7 @@ export function UserProvider({children}) {
 
   const updateUser = async newUserObj => {
     try {
-      await setUser(prevUser => ({...prevUser, ...newUserObj})); // Merge new data
+      setUser(prevUser => ({...prevUser, ...newUserObj})); // Merge new data
     } catch (err) {
       console.error('updaing user state failed: ', err);
     }
