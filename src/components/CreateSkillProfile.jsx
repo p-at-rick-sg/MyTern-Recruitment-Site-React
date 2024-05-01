@@ -1,206 +1,157 @@
 import {useState, useEffect} from 'react';
+import useFetch from '../hooks/useFetch';
 //Component Imports
 import UploadResume from './UploadResume';
 import SkillsList from './SkillsList';
 
 //MUI Imports
-import {Grid, Typography, CircularProgress, TextField, List} from '@mui/material';
+import {Grid, Typography, CircularProgress, TextField, Button} from '@mui/material';
 import SkillsModal from './UserComponents/SkillsModal';
+import {input} from '@material-tailwind/react';
 
 const CreateSkillProfile = () => {
-  //TEMP RETURN OBJECT
-  const tmpResumeObj = {
-    summary: 'I am an accomplished IT professional with over 20 years industry experience.',
-    skills: [
-      {
-        name: 'it systems management',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'team management and development',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'vendor and contract management',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'service delivery, incident management and change control',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'global it support and environment management',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'backup and disaster recovery solutions',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'microsoft technologies',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'network architecture lan/wan',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'networking and telephony technology',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'virtualisation technology',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-      {
-        name: 'cloud technologies',
-        level: 0,
-        yearsExp: 0,
-        validated: false,
-      },
-    ],
-    education: [
-      {
-        qualification: 'bsc (hons) information technology (grade - 2:1)',
-        institution: '',
-        endYear: null,
-      },
-      {
-        qualification: 'advanced gnvq information technology (grade - merit)',
-        institution: '',
-        endYear: null,
-      },
-      {
-        qualification: 'itil foundation',
-        institution: '',
-        endYear: null,
-      },
-    ],
-    certifications: [],
-    experience: [
-      {
-        title: 'group it manager',
-        company: 'corex group',
-        startDate: {
-          year: 2019,
-          month: 10,
-        },
-        endDate: {
-          year: 2024,
-          month: 4,
-        },
-        details:
-          'Overall IT Budget management\nResponsibility for all IT systems\nAll support and change management\nVendors and contracts, including 3rd party support relationships\nKey projects undertaken:\nMigration of on premise to Microsoft 365\nMigration of on premise data centre to Microsoft Azure\nCompany mergers and integrations',
-      },
-      {
-        title: 'regional it systems manager',
-        company: 'npac holdings',
-        startDate: {
-          year: 2016,
-          month: 2,
-        },
-        endDate: {
-          year: 2019,
-          month: 10,
-        },
-        details:
-          'Delegation and management of support calls\nProvide 3rd line support when required to aid problem resolution\nBackup and disaster recovery management\nIT hardware and systems maintenance\nVendor management for purchasing and support\nContinuous improvement planning\nProject management\nKey projects undertaken:\nMigration of 13 sites to NPACs systems after an acquisition\nImplementation of Meraki LAN and WiFi solution to all locations\nMigration to Skype for Business full voice solution\nActive Directory and Exchange migration for over 600 users\nProvide infrastructure support to a global SAP implementation',
-      },
-      {
-        title: 'it infrastructure manager',
-        company: 'whitecroft lighting ltd',
-        startDate: {
-          year: 2015,
-          month: 4,
-        },
-        endDate: {
-          year: 2016,
-          month: 2,
-        },
-        details:
-          'Contract and vendor management\nChange implementation for new IT systems\nDelegation and management of support calls\nProvide 3rd line support when required to aid problem resolution\nBackup and disaster recovery management\nIT hardware and systems maintenance',
-      },
-      {
-        title: 'infrastructure manager',
-        company: 'api group plc',
-        startDate: {
-          year: 2012,
-          month: null,
-        },
-        endDate: {
-          year: 2015,
-          month: 3,
-        },
-        details:
-          'Delegation and management of support calls\nProvide 3rd line support when required to aid problem resolution\nBackup and disaster recovery management\nIT hardware and systems maintenance\nVendor management for purchasing and support\nContinuous improvement planning\nProject management\nKey projects undertaken:\nMigration of global WAN to a new supplier\nImplementation of a Cisco IP telephony and unified communications platform\nImplementation of highly available Hyper-V clusters in multiple locations\nDevelop backup and disaster recovery strategy to ensure continuous IT services\nUpgrade of global infrastructure to meet the requirements of a new ERP system\nDevelop a strategy and budget for rolling hardware improvements',
-      },
-      {
-        title: 'systems administrator',
-        company: 'api group plc',
-        startDate: {
-          year: 2004,
-          month: 10,
-        },
-        endDate: {
-          year: 2012,
-          month: null,
-        },
-        details:
-          'Day-to-day management of systems (email, internet, security and file and print services)\nDesktop and infrastructure support. 2nd and 3rd line\nRoutine maintenance\nTroubleshoot problems with software, hardware and networks\nCo-ordinate backups and data archiving\nData management\nUpgrades of hardware and software on desktops and servers\nImplementation of new technologies',
-      },
-    ],
-  };
-  // END OF TEMP OBJECT
+  const fetchData = useFetch();
+
   const [showSkillsModal, setShowSkillsModal] = useState(false);
-  const [updateRow, setUpdateRow] = useState({});
-  const [resumeObj, setResumeObj] = useState(null);
+  const [importResult, setImportResult] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [analysing, setAnalysing] = useState(false);
-
   const [inputFields, setInputFields] = useState({
     summary: '',
   });
-
-  useEffect(() => {
-    //temp setting from them object
-    setResumeObj(tmpResumeObj);
-  }, [tmpResumeObj]);
-
-  useEffect(() => {
-    if (resumeObj) {
-      setInputFields({...inputFields, summary: resumeObj.summary});
-    }
-  }, [resumeObj]);
-
+  const [skillsFields, setSkillsFields] = useState([]);
+  const [toDelete, setToDelete] = useState([]);
   const [error, setError] = useState({
     summary: false,
   });
 
-  const handleSubmit = e => {
-    console.log(submitting);
+  const getBasic = async () => {
+    if (inputFields.summary.length === 0) {
+      const basicResult = await fetchData(
+        '/api/talent/basic/7adf8371-9148-48c6-b7ad-090016faba21',
+        'GET'
+      ); //TODO update to using the logged in userId
+      console.log(basicResult);
+      setInputFields({...inputFields, summary: basicResult.data.summary});
+    }
+    return true;
   };
 
-  const handleChange = e => {};
+  const getSkills = async () => {
+    const skillsResult = await fetchData('/api/skills/7adf8371-9148-48c6-b7ad-090016faba21', 'GET');
+    // console.log(skillsResult);
+    if (skillsResult.data.length !== 0) {
+      console.log('adding the skills items to the state Array');
+      setSkillsFields(skillsResult.data);
+    }
+    console.log(skillsFields);
+  };
+
+  useEffect(() => {
+    if (!importResult) {
+      //remove ! after testing)
+      console.log('running useEffect for updated object');
+      getBasic();
+      getSkills();
+    }
+  }, []); //add import result back after testing
+
+  const deleteSkills = async () => {
+    if (toDelete.length === 0) {
+      console.log('no skills to be removed');
+      return true;
+    } else {
+      try {
+        const deleteResponse = await fetch(
+          import.meta.env.VITE_SERVER + '/api/talent/delete-skills',
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(toDelete),
+            withCredentials: true,
+            credentials: 'include',
+          }
+        );
+        const data = await deleteResponse.json();
+        if (data.status === 'ok') {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+  };
+
+  const updateSkills = async () => {
+    const toUpdate = skillsFields.filter(skill => skill.changed === true);
+    if (toUpdate.length !== 0) {
+      let updateArr = [];
+      for (const skillObj of toUpdate) {
+        const tmpObj = {
+          skillId: skillObj.skill_id,
+          level: skillObj.level,
+          experience: skillObj.experience,
+        };
+        updateArr.push(tmpObj);
+      }
+      try {
+        const updateResponse = await fetch(
+          import.meta.env.VITE_SERVER + '/api/talent/update-skills',
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateArr),
+            withCredentials: true,
+            credentials: 'include',
+          }
+        );
+        const data = await updateResponse.json();
+        if (data.status === 'ok') {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+  };
+
+  const handleSubmit = e => {
+    setSubmitting(true);
+    const deleteOK = deleteSkills();
+    if (deleteOK) {
+      console.log('delete confirmed');
+      setToDelete([]);
+      const updateOK = updateSkills();
+      if (updateOK) {
+        console.log('updated skills');
+      } else {
+        console.error('failed to update skills');
+      }
+    }
+    console.log('update completed successfully');
+  };
+
+  const handleChange = e => {
+    e.preventDefault();
+    if (e.target.name === 'summary') {
+      setInputFields({...inputFields, [e.target.name]: e.target.value, changed: true});
+    }
+  };
+
+  const handleCancel = async () => {
+    inputFields.summary = '';
+    getBasic();
+    getSkills();
+    setSubmitting(false);
+  };
 
   return (
     <>
@@ -212,7 +163,7 @@ const CreateSkillProfile = () => {
         </Grid>
         <Grid item xs={12} md={6} sx={{border: 1, color: 'red'}}>
           <UploadResume
-            setResumeObj={setResumeObj}
+            setImportResult={setImportResult}
             analysing={analysing}
             setAnalysing={setAnalysing}
           />
@@ -241,22 +192,26 @@ const CreateSkillProfile = () => {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={11} sx={{border: 1, color: 'purple', borderStyle: 'dashed', mt: 3}}>
+        <Grid item xs={10} sx={{border: 1, color: 'purple', borderStyle: 'dashed', mt: 3}}>
           <SkillsList
-            resumeObj={resumeObj}
-            setInputFields={setInputFields}
+            setSkillsFields={setSkillsFields}
+            skillsFields={skillsFields}
             setShowSkillsModal={setShowSkillsModal}
+            setToDelete={setToDelete}
+            toDelete={toDelete}
           />
         </Grid>
+        <Grid item xs={2} sx={{border: 1, color: 'pink', borderStyle: 'dotted'}}>
+          <Button variant="outlined" onClick={handleCancel} sx={{margin: 1}}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} variant="contained" sx={{margin: 1}}>
+            Submit
+          </Button>
+        </Grid>
       </Grid>
-      const [updateRow, setupdateRow] = useState({})
-      {showSkillsModal && (
-        <SkillsModal
-          setShowSkillsModal={setShowSkillsModal}
-          updateRow={updateRow}
-          setUpdateRow={setUpdateRow}
-        />
-      )}
+
+      {showSkillsModal && <SkillsModal setShowSkillsModal={setShowSkillsModal} />}
     </>
   );
 };

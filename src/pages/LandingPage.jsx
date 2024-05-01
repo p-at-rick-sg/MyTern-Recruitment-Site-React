@@ -10,8 +10,12 @@ import LandingCard from '../components/LandingComponents/LandingCard';
 
 const LandingPage = () => {
   // TODO Add logic to check for login or can I do this in the app bar as it's always called and reduces code?
-  const {user} = useUser();
-  console.log(user);
+  const {user, checkLocalUser} = useUser();
+
+  useEffect(() => {
+    checkLocalUser();
+  });
+
   const cardOne = {
     image: '/office_workers.jpeg',
     title: 'Find Your Perfect Role',

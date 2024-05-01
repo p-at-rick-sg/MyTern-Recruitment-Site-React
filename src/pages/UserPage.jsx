@@ -1,16 +1,19 @@
 //React imports
-
+import {useUser} from '../hooks/useUser';
 //MUI Imports
 import {Container} from '@mui/material';
 
 //Component Imports
 import CreateSkillProfile from '../components/CreateSkillProfile';
+import UserHome from '../components/UserComponents/UserHome';
 
 const UserPage = () => {
+  const {updateUser, user} = useUser();
+  console.log('user in stateis: ', user);
+
   return (
     <Container maxWidth="lg" sx={{border: 1}}>
-      <h1>User Page Placeholder Text Top Level </h1>
-      <CreateSkillProfile />
+      <UserHome user={user} />
     </Container>
   );
 };

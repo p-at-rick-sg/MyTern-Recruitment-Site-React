@@ -58,14 +58,14 @@ let userTheme = createTheme({
 userTheme = responsiveFontSizes(userTheme);
 
 function App() {
-  const {user, checkSession} = useUser();
+  const {user, checkLocalUser} = useUser();
 
   useEffect(() => {
-    checkSession();
+    checkLocalUser();
   }, []);
 
-  if (user.role === 'user') {
-    //There are the talent signedin routes
+  if (user.type === 'user') {
+    //Talent signedin routes
     return (
       <ThemeProvider theme={userTheme}>
         <CssBaseline />
@@ -77,10 +77,27 @@ function App() {
               <Route path="/home" element={<LandingPage />} />
               <Route path="/user" element={<UserPage />} />
               <Route path="/profile" element={<ProfileManager />} />
-              <Route path="/checkout/:projectID" element={<Checkout />} />
-              <Route path="checkout/stripe" element={<StripePayment />} />
-              <Route path="/success" element={<StripeSuccess />} />
-              <Route path="/cancel" element={<StripeCancel />} />
+              <Route path="oauth-success" element={<OauthSuccess />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            <Footer />
+          </Fragment>
+        </LocalizationProvider>
+      </ThemeProvider>
+    );
+  } else if (user.type === 'corp' && user.role === 'admin') {
+    //Corp Admin Signed In Routes
+    return (
+      <ThemeProvider theme={userTheme}>
+        <CssBaseline />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Fragment>
+            <NavBar />
+            <Routes>
+              <Route path="/" element={<Navigate to="/home" />} />
+              <Route path="/home" element={<LandingPage />} />
+              <Route path="/profile" element={<ProfileManager />} />
+              <Route path="oauth-success" element={<OauthSuccess />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             <Footer />
@@ -99,7 +116,6 @@ function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<LandingPage />} />
-              <Route path="/user" element={<UserPage />} />
               <Route path="/newnav" element={<CorpNav />} />
               <Route path="signup" element={<UserSignup />} />
               <Route path="company-signup" element={<CompanySignupStepper />} />

@@ -6,8 +6,8 @@ import {useUser} from '../hooks/useUser';
 const OauthSuccess = () => {
   const {updateUser, user} = useUser();
   const navigate = useNavigate();
+
   useEffect(() => {
-    // TODO: add logic here to check user object for this before calling
     whoAmI();
   }, []);
 
@@ -22,18 +22,25 @@ const OauthSuccess = () => {
   // };
 
   const whoAmI = async () => {
-    // here we always fetch and set for simplicity as this is the first page we hit
+    console.log('trying to see who i am!');
     const result = await fetch(import.meta.env.VITE_SERVER + '/api/sec/whoami', {
       method: 'GET',
       withCredentials: true,
       credentials: 'include',
     });
-    const data = await result.json();
-    await updateUser(data);
+    if (result.status == 200) {
+      const data = await result.json();
+      await updateUser(data);
+      //Set local session data for ease of navigation
+      console.log('setting session storage');
+      const userStr = JSON.stringify(data);
+      sessionStorage.setItem('user', userStr);
+    } else {
+      console.log('failed to find who i am');
+    }
   };
 
   useEffect(() => {
-    console.log(user);
     if (user.type === 'user') {
       navigate('/');
     }

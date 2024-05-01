@@ -42,35 +42,36 @@ const NavBar = () => {
                 variant="h6"
                 component="div"
                 sx={{display: {xs: 'none', sm: 'inline'}, flexGrow: 1}}></Typography>
-              {!user.role && (
+              {!user.type && (
                 <Button color="inherit" component={NavLink} to="signin">
                   Sign In
                 </Button>
               )}
-              {user.role && (
-                <Button color="inherit" component={NavLink} to="home" onClick={logout}>
-                  Logout
+
+              {user.type === 'user' && (
+                <Button color="inherit" component={NavLink} to="user">
+                  My Home
                 </Button>
               )}
-              {user.role === 'contributor' && (
-                <Button color="inherit" component={NavLink} to="member">
-                  Member Area
-                </Button>
-              )}
-              {user.role === 'admin' && (
+              {user.type === 'corp' && user.role === 'admin' && (
                 <Button color="inherit" component={NavLink} to="admin/dashboard">
-                  Admin Dashboard
+                  Company Admin Dashboard
                 </Button>
               )}
 
-              {!user.role && (
+              {!user.type && (
                 <Button color="inherit" component={NavLink} to="signup">
                   Sign Up
                 </Button>
               )}
-              {user.role && (
+              {user.type && (
+                <Button color="inherit" component={NavLink} to="home" onClick={logout}>
+                  Logout
+                </Button>
+              )}
+              {user.type && (
                 <IconButton sx={{m: 1, bgcolor: 'footer.text'}} onClick={handleProfile}>
-                  <AccountCircleIcon sx={{color: 'white', fontSize: 'large'}} />
+                  <AccountCircleIcon sx={{color: 'primary', fontSize: '2rem', border: 'none'}} />
                 </IconButton>
               )}
             </Toolbar>

@@ -4,7 +4,7 @@ import {useUser} from '../hooks/useUser';
 //MUI Imports
 import {Box, TextField, Grid, LinearProgress, Button} from '@mui/material';
 
-const UploadResume = ({setResumeObj, analysing, setAnalysing}) => {
+const UploadResume = ({analysing, setAnalysing, setImportResult}) => {
   //add projectID prop after testing
   const {user} = useUser();
   const [resume, setResume] = useState(null);
@@ -40,8 +40,9 @@ const UploadResume = ({setResumeObj, analysing, setAnalysing}) => {
         const analysisResult = await analyseResume(uploadedResponse, userId);
         console.log('Anaysis Returned Obj: ', analysisResult);
         if (analysisResult) {
-          setResumeObj(analysisResult);
+          setFileError(false);
           setAnalysing(false);
+          setImportResult(true);
         }
       } else {
         console.error('the file attribute was null');
