@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import useFetch from '../hooks/useFetch';
 //Component Imports
 import UploadResume from './UploadResume';
 import SkillsList from './SkillsList';
@@ -7,17 +6,15 @@ import SkillsList from './SkillsList';
 //MUI Imports
 import {Grid, Typography, CircularProgress, TextField, Button} from '@mui/material';
 import SkillsModal from './UserComponents/SkillsModal';
-import {input} from '@material-tailwind/react';
 
 const CreateSkillProfile = () => {
-  const fetchData = useFetch();
-
   const [showSkillsModal, setShowSkillsModal] = useState(false);
   const [importResult, setImportResult] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [analysing, setAnalysing] = useState(false);
   const [inputFields, setInputFields] = useState({
     summary: '',
+    active: true,
   });
   const [skillsFields, setSkillsFields] = useState([]);
   const [toDelete, setToDelete] = useState([]);
@@ -26,30 +23,34 @@ const CreateSkillProfile = () => {
   });
 
   const getBasic = async () => {
-    if (inputFields.summary.length === 0) {
-      const basicResult = await fetchData(
-        '/api/talent/basic/7adf8371-9148-48c6-b7ad-090016faba21',
-        'GET'
-      ); //TODO update to using the logged in userId
+    const basicResult = await fetch(import.meta.env.VITE_SERVER + '/api/talent/basic', {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (basicResult.status == 200) {
       console.log(basicResult);
-      setInputFields({...inputFields, summary: basicResult.data.summary});
+      const data = await basicResult.json();
+      console.log('basic user info: ', data);
+      setInputFields({...inputFields, summary: data.summary, active: data.active});
     }
     return true;
   };
 
   const getSkills = async () => {
-    const skillsResult = await fetchData('/api/skills/7adf8371-9148-48c6-b7ad-090016faba21', 'GET');
-    // console.log(skillsResult);
-    if (skillsResult.data.length !== 0) {
+    const skillsResult = await fetch(import.meta.env.VITE_SERVER + '/api/talent/skills', {
+      method: 'GET',
+      credentials: 'include',
+    });
+    if (skillsResult.status === 200) {
+      const data = await skillsResult.json();
+      console.group('skills result is: ', data);
       console.log('adding the skills items to the state Array');
-      setSkillsFields(skillsResult.data);
+      setSkillsFields(data);
     }
-    console.log(skillsFields);
   };
 
   useEffect(() => {
     if (!importResult) {
-      //remove ! after testing)
       console.log('running useEffect for updated object');
       getBasic();
       getSkills();
@@ -123,6 +124,22 @@ const CreateSkillProfile = () => {
     }
   };
 
+  const updateBasic = async () => {
+    console.log('the basic object we have is: ', inputFields);
+    const basicResponse = await fetch(import.meta.env.VITE_SERVER + '/api/talent/update-basic', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(inputFields),
+      credentials: 'include',
+    });
+    const data = await basicResponse.json();
+    if (data.status === 200) {
+      return true;
+    } else return false;
+  };
+
   const handleSubmit = e => {
     setSubmitting(true);
     const deleteOK = deleteSkills();
@@ -132,6 +149,10 @@ const CreateSkillProfile = () => {
       const updateOK = updateSkills();
       if (updateOK) {
         console.log('updated skills');
+        const basicOK = updateBasic();
+        if (basicOK) {
+          console.log('all updates successful');
+        }
       } else {
         console.error('failed to update skills');
       }
@@ -147,7 +168,7 @@ const CreateSkillProfile = () => {
   };
 
   const handleCancel = async () => {
-    inputFields.summary = '';
+    console.log('refreshing the page after pulling data again');
     getBasic();
     getSkills();
     setSubmitting(false);

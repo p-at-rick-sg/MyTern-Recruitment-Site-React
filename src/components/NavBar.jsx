@@ -9,7 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useUser} from '../hooks/useUser';
 
 const NavBar = () => {
-  const {pageTitle, logout, user} = useUser();
+  const {logout, user} = useUser();
 
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);

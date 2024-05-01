@@ -60,10 +60,6 @@ userTheme = responsiveFontSizes(userTheme);
 function App() {
   const {user, checkLocalUser} = useUser();
 
-  useEffect(() => {
-    checkLocalUser();
-  }, []);
-
   if (user.type === 'user') {
     //Talent signedin routes
     return (

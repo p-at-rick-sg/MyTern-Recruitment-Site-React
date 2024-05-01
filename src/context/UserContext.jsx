@@ -21,26 +21,31 @@ export function UserProvider({children}) {
     }
   };
 
-  const checkRemaining = expSeconds => {
-    var d = new Date();
-    var secondsNow = Math.round(d.getTime() / 1000);
-    const remainingSecs = expSeconds - secondsNow;
-    console.log('expiry set to: ', expSeconds);
-    console.log('now is : ', secondsNow);
-    console.log('Remaining Seconds', remainingSecs);
-    if (remainingSecs > 300000) return true;
-    if (remainingSecs < 0) return false;
-  };
+  // const checkRemaining = expSeconds => {
+  //   var d = new Date();
+  //   var secondsNow = Math.round(d.getTime() / 1000);
+  //   const remainingSecs = expSeconds - secondsNow;
+  //   console.log('expiry set to: ', expSeconds);
+  //   console.log('now is : ', secondsNow);
+  //   console.log('Remaining Seconds', remainingSecs);
+  //   if (remainingSecs >= 300) return true;
+  //   if (remainingSecs < 300 && remainingSecs > 0) return 'short';
+  //   if (remainingSecs < 0) return false;
+  // };
 
-  const checkLocalUser = async () => {
-    const tmpUserStr = sessionStorage.getItem('user');
-    const tmpUserObj = JSON.parse(tmpUserStr);
-    const stillValid = checkRemaining(tmpUserObj.exp);
-    console.log(stillValid);
-  };
+  // const checkLocalUser = async () => {
+  //   const tmpUserStr = sessionStorage.getItem('user');
+  //   if (tmpUserStr !== null) {
+  //     const tmpUserObj = JSON.parse(tmpUserStr);
+  //     const stillValid = checkRemaining(tmpUserObj.exp);
+  //     console.log(stillValid);
+  //     if (stillValid && user.role === null) updateUser(tmpUserObj);
+  //   } else return;
+  // };
 
   const logout = async () => {
     console.log('logout function');
+    console.log(user.email);
     //remove data form the server
     const signoutResult = await fetch(import.meta.env.VITE_SERVER + '/auth/signout', {
       method: 'POST',
@@ -57,12 +62,9 @@ export function UserProvider({children}) {
 
   //here  are the items we will pass to the context
   const value = {
-    pageTitle,
-    setPageTitle,
     user,
     updateUser,
     logout,
-    checkLocalUser,
   };
 
   //return the context provider below using thew value object above
