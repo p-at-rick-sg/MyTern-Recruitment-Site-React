@@ -1,3 +1,4 @@
+import RolesTable from '../components/FormComponents/RolesTable';
 import {useUser} from '../hooks/useUser';
 
 //MUI Imports
@@ -22,9 +23,8 @@ const CorpPage = () => {
           <Grid item xs={12}>
             <Typography variant="h4">Welcome back {user.firstName}</Typography>
           </Grid>
-
-          <Grid item xs={6}>
-            <Button variant="contained">Create Role</Button>
+          <Grid item xs={10}>
+            <RolesTable />
           </Grid>
           <Grid item xs={6}></Grid>
         </Grid>

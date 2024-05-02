@@ -1,11 +1,9 @@
 import {createContext, useState, useRef} from 'react';
-
 export const UserContext = createContext();
 export function UserProvider({children}) {
   //Add all the stuff we will keep in context below
 
   const [showSetup, setShowSetup] = useState('');
-
   const [user, setUser] = useState({});
 
   const updateUser = async newUserObj => {
@@ -69,6 +67,7 @@ export function UserProvider({children}) {
         });
         const data = await signoutResult.json();
         console.log('signout response:', data);
+        window.location.href = '/';
       } catch (err) {
         console.error('failed on the server signout func');
       }

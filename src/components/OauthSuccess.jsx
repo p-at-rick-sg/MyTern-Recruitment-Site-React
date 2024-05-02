@@ -14,6 +14,8 @@ const OauthSuccess = () => {
       whoAmI();
     } else if (user.type === 'user') {
       navigate('/user');
+    } else if (user.type === 'corp') {
+      navigate('/corp');
     }
   });
 
@@ -28,7 +30,7 @@ const OauthSuccess = () => {
       console.log(userData);
       const userUpdated = await updateUser(userData);
       if (userUpdated) {
-        console.log('setting the locall session storage');
+        console.log('setting the local session storage');
         sessionStorage.setItem('user', JSON.stringify(userData));
       }
     }

@@ -1,8 +1,11 @@
 import {useState} from 'react';
+import {NavLink, Link, useNavigate} from 'react-router-dom';
+import {useUser} from '../../hooks/useUser';
 //MUI Imports
 import {styled, useTheme} from '@mui/material/styles';
 import {
   Box,
+  Button,
   Drawer,
   Toolbar,
   List,
@@ -20,6 +23,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact';
 
 const drawerWidth = 240;
 
@@ -68,6 +74,9 @@ const DrawerHeader = styled('div')(({theme}) => ({
 export default function CorpNav() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const {user, logout} = useUser();
+  const navigate = useNavigate();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -75,6 +84,16 @@ export default function CorpNav() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleProfile = () => {
+    if (profileOpen) {
+      setProfileOpen(!profileOpen);
+      navigate('/corp');
+    } else {
+      setProfileOpen(!profileOpen);
+      navigate('/profile');
+    }
   };
 
   return (
@@ -92,6 +111,12 @@ export default function CorpNav() {
           <Typography variant="h6" noWrap component="div">
             Your Recruitment Dashboard
           </Typography>
+          <div style={{flexGrow: 1}} /> {/* Add a spacer to push the account icon to the end */}
+          {user.type && (
+            <IconButton sx={{m: 1, bgcolor: 'footer.text'}} onClick={handleProfile}>
+              <AccountCircleIcon sx={{color: 'primary', fontSize: '2rem', border: 'none'}} />
+            </IconButton>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -113,27 +138,24 @@ export default function CorpNav() {
         </DrawerHeader>
         <Divider />
         <List>
-          {/* Need to update the items to use a pg table */}
-          {['Test Token', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
+          {[
+            {title: 'Create Role', icon: 'AddTaskIcon', link: '/new-role'},
+            {title: 'Manage Roles', icon: 'ConnectWithoutContactIcon', link: '/new-role'},
+            {title: 'User Admin', icon: 'ConnectWithoutContactIcon', link: '/new-role'},
+            {title: 'Account Admin', icon: 'ConnectWithoutContactIcon', link: '/new-role'},
+          ].map((item, index) => (
+            <ListItem key={index} disablePadding>
+              <ListItemButton onClick={() => navigate(item.link)}>
+                <ListItemText primary={item.title} />
               </ListItemButton>
             </ListItem>
           ))}
+          <ListItem>
+            <ListItemButton onClick={logout}>
+              <ListItemText>LOGOUT</ListItemText>
+            </ListItemButton>
+          </ListItem>
         </List>
-        {/* <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List> */}
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
