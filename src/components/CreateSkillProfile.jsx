@@ -5,10 +5,8 @@ import SkillsList from './SkillsList';
 
 //MUI Imports
 import {Grid, Typography, CircularProgress, TextField, Button} from '@mui/material';
-import SkillsModal from './UserComponents/SkillsModal';
 
 const CreateSkillProfile = () => {
-  const [showSkillsModal, setShowSkillsModal] = useState(false);
   const [importResult, setImportResult] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [analysing, setAnalysing] = useState(false);
@@ -43,8 +41,6 @@ const CreateSkillProfile = () => {
     });
     if (skillsResult.status === 200) {
       const data = await skillsResult.json();
-      console.group('skills result is: ', data);
-      console.log('adding the skills items to the state Array');
       setSkillsFields(data);
     }
   };
@@ -158,6 +154,7 @@ const CreateSkillProfile = () => {
       }
     }
     console.log('update completed successfully');
+    setSubmitting(false);
   };
 
   const handleChange = e => {
@@ -176,7 +173,7 @@ const CreateSkillProfile = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid item xs={12} sx={{border: 1, color: 'purple'}}>
           <Typography variant="h3" sx={{textAlign: 'center'}}>
             Build your Search Profile
@@ -217,7 +214,6 @@ const CreateSkillProfile = () => {
           <SkillsList
             setSkillsFields={setSkillsFields}
             skillsFields={skillsFields}
-            setShowSkillsModal={setShowSkillsModal}
             setToDelete={setToDelete}
             toDelete={toDelete}
           />
@@ -231,8 +227,6 @@ const CreateSkillProfile = () => {
           </Button>
         </Grid>
       </Grid>
-
-      {showSkillsModal && <SkillsModal setShowSkillsModal={setShowSkillsModal} />}
     </>
   );
 };

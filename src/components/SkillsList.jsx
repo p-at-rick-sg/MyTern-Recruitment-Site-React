@@ -1,9 +1,12 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 //MUI Imports
 import {Button, InputLabel, Select, MenuItem, TextField} from '@mui/material';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import EditIcon from '@mui/icons-material/Edit';
+
+//Component Imports
+import SkillsModal from './UserComponents/SkillsModal';
 
 export default function SkillsList({
   resumeObj,
@@ -13,6 +16,31 @@ export default function SkillsList({
   toDelete,
   setToDelete,
 }) {
+  const [addSkillModal, setAddSkillModal] = useState(false);
+  const [skillArr, setSkillArr] = useState([]);
+
+  const getSkills = async () => {
+    console.log('fetching the full skills list');
+    const skillsResult = await fetch(import.meta.env.VITE_SERVER + '/api/skills', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(skillsResult.status);
+    if (skillsResult.status === 200) {
+      const tmpSkillArr = await skillsResult.json();
+      console.log(tmpSkillArr);
+      await setSkillArr(tmpSkillArr);
+      console.log(skillArr);
+    }
+  };
+
+  useEffect(() => {
+    console.log('effect to get the skills list arr');
+    getSkills();
+  }, []);
+
   const deleteById = id => {
     //update state
     setSkillsFields(oldValues => {
@@ -41,6 +69,11 @@ export default function SkillsList({
     setSkillsFields(updatedSkillsFields);
   };
 
+  const handleAdd = () => {
+    console.log('should open the modal');
+    setAddSkillModal(true);
+  };
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
@@ -52,7 +85,7 @@ export default function SkillsList({
         </div>
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
-            type="button"
+            onClick={handleAdd}
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             Add Skill
           </button>
@@ -81,7 +114,7 @@ export default function SkillsList({
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    className="px-1 py-3.5 text-left text-sm font-semibold text-gray-900">
                     Validated
                   </th>
                 </tr>
@@ -144,6 +177,13 @@ export default function SkillsList({
           </div>
         </div>
       </div>
+      {addSkillModal && (
+        <SkillsModal
+          setAddSkillModal={setAddSkillModal}
+          setSkillsFields={setSkillsFields}
+          skillArr={skillArr}
+        />
+      )}
     </div>
   );
 }

@@ -21,37 +21,28 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const Signin = () => {
   const fetchData = useFetch();
-  const {user, setUser} = useUser(); // comes from user context
+  const {user, checkLocalSession} = useUser(); // comes from user context
   const [credentials, setCredentials] = useState({email: '', password: ''});
   const [submitting, setSubmitting] = useState(false);
   const [failed, setFailed] = useState(false);
   const navigate = useNavigate();
 
-  // //check logged in session data and bypass login if exists
-  // const checkSession = () => {
-  //   console.log('checking session');
-  //   if (sessionStorage.getItem('access') !== null) {
-  //     console.log('data in session storage, bypassing login');
-  //     const sessionAccess = sessionStorage.getItem('access');
-  //     const type = sessionStorage.getItem('type');
-  //     setUser({...user, accessToken: sessionAccess, type: type});
-  //     if (type !== 'user') {
-  //       navigate('/member');
-  //     } else {
-  //       navigate('/');
-  //     }
-  //   }
-  // };
+  const preCheck = async () => {
+    const currentSession = await checkLocalSession();
+    if (currentSession) {
+      console.log('valid session found - redirecting');
+      navigate('/user');
+    }
+  };
 
-  // useEffect(() => {
-  //   checkSession();
-  // }, []);
+  useEffect(() => {
+    preCheck();
+  }, []);
 
   const handleSignin = async e => {
     e.preventDefault();
     setSubmitting(true);
     const tmpObj = credentials;
-
     const res = await fetch(import.meta.env.VITE_SERVER + '/auth/signin', {
       method: 'POST',
       headers: {

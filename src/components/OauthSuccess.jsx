@@ -26,7 +26,11 @@ const OauthSuccess = () => {
     if (result.status === 200) {
       const userData = await result.json();
       console.log(userData);
-      await updateUser(userData);
+      const userUpdated = await updateUser(userData);
+      if (userUpdated) {
+        console.log('setting the locall session storage');
+        sessionStorage.setItem('user', JSON.stringify(userData));
+      }
     }
   };
 

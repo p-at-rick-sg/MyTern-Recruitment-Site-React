@@ -14,7 +14,7 @@ import {useUser} from '../hooks/useUser';
 import useFetch from '../hooks/useFetch';
 
 const ProfileManager = () => {
-  const {user, setUser} = useUser(); //also remember to push back to the database
+  const {user, setUser} = useUser();
   const fetchData = useFetch();
   const navigate = useNavigate();
   const [showUpgrade, setShowUpgrade] = useState(false);

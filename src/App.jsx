@@ -11,12 +11,15 @@ import CompanySignupStepper from './components/SignupForms/CompanySignupStepper'
 import Signin from './components/Signin';
 import SripeSuccess from './components/StripeSuccess';
 import StripeCancel from './components/StripeCancel';
-import ProfileManager from './components/ProfileManager';
 import StripePayment from './components/StripePayment';
+import ProfileManager from './components/ProfileManager';
 import AdminPage from './pages/AdminPage';
 import CorpNav from './components/Navbar/CorpNav';
 import LandingPage from './pages/LandingPage';
 import OauthSuccess from './components/OauthSuccess';
+import CorpPage from './pages/CorpPage';
+import SkillsModal from './components/UserComponents/SkillsModal';
+import AddRoleForm from './components/FormComponents/AddRoleForm';
 
 //Context Imports (may need to set the theme here if we want light/dark mode setup)
 import {useUser} from './hooks/useUser';
@@ -58,7 +61,12 @@ let userTheme = createTheme({
 userTheme = responsiveFontSizes(userTheme);
 
 function App() {
-  const {user, checkLocalUser} = useUser();
+  const {user, checkLocalSession} = useUser();
+
+  useEffect(() => {
+    console.log('checking local user creds');
+    checkLocalSession();
+  }, []);
 
   if (user.type === 'user') {
     //Talent signedin routes
@@ -88,10 +96,12 @@ function App() {
         <CssBaseline />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Fragment>
-            <NavBar />
+            <CorpNav />
             <Routes>
               <Route path="/" element={<Navigate to="/home" />} />
               <Route path="/home" element={<LandingPage />} />
+              <Route path="/corp" element={<CorpPage />} />
+              <Route path="/new-role" element={<AddRoleForm />} />
               <Route path="/profile" element={<ProfileManager />} />
               <Route path="oauth-success" element={<OauthSuccess />} />
               <Route path="*" element={<NotFoundPage />} />
@@ -118,6 +128,7 @@ function App() {
               <Route path="signin" element={<Signin />} />
               <Route path="oauth-success" element={<OauthSuccess />} />
               <Route path="*" element={<NotFoundPage />} />
+              <Route path="/add-skill" element={<SkillsModal />} />
             </Routes>
             <Footer />
           </Fragment>

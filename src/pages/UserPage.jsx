@@ -2,14 +2,14 @@
 import {useState, useEffect} from 'react';
 import {useUser} from '../hooks/useUser';
 //MUI Imports
-import {Container} from '@mui/material';
+import {Container, Grid, Typography, Button} from '@mui/material';
 
 //Component Imports
 import CreateSkillProfile from '../components/CreateSkillProfile';
 
 const UserPage = () => {
   const {user} = useUser();
-  const [showSetup, setShowSetup] = useState(true);
+  const [showSetup, setShowSetup] = useState(false);
   const [basicInfo, setBasicInfo] = useState({});
 
   const getBasicDetails = async () => {
@@ -47,7 +47,21 @@ const UserPage = () => {
   } else {
     return (
       <Container maxWidth="lg" sx={{border: 1}}>
-        here is some text
+        <Grid container spacing={2}>
+          <Grid item xs={12} sx={{border: 1, borderColor: 'purple'}}>
+            <Typography variant="h3" sx={{textAlign: 'center'}}>
+              Your Home to Find Your Perfect Role
+            </Typography>
+          </Grid>
+          <Grid item xs={7} sx={{border: 'red'}}>
+            <Button variant="contained" onClick={() => setShowSetup(true)}>
+              Setup Your Profile
+            </Button>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2}>
+          <Grid item>Holding Space for Match List</Grid>
+        </Grid>
       </Container>
     );
   }
