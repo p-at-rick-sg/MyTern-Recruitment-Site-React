@@ -36,15 +36,6 @@ const AddRoleForm = () => {
 
   const validateValues = inputValues => {
     let tmpErrors = {};
-    if (inputValues.email.length < 5) {
-      tmpErrors.email = 'Email is too short';
-    }
-    if (inputValues.password.length < 8) {
-      tmpErrors.passwordLength = 'Password is too short';
-    }
-    if (inputValues.passwordCheck !== inputValues.password) {
-      tmpErrors.passwordMatch = 'Passwords Do Not Match';
-    }
     return tmpErrors;
   };
 
@@ -62,7 +53,6 @@ const AddRoleForm = () => {
     e.preventDefault();
 
     SetInputFields({
-      company: '',
       jobTitle: '',
       jobDescription: '',
       postedDate: '',
@@ -73,19 +63,27 @@ const AddRoleForm = () => {
   };
 
   const handleFilter = e => {
+    console.log('updating filter');
     const filter = e.target.value;
     const filteredSkills = skillsArr.filter(skill => skill.skill_name.includes(filter));
     setFilteredSkillsArr(filteredSkills);
-    console.log(filteredSkillsArr);
   };
 
   const handleListItemAdd = (e, skillObj) => {
+    //add to the added array
     setAddedSkillsArr([...addedSkillsArr, skillObj]);
+    //remove from the main array
+    const tmpArr = skillsArr.filter(skill => skill !== skillObj);
+    setSkillsArr(tmpArr);
   };
 
   const handleListItemRemove = (e, skillObj) => {
+    //find the skill and remove
     const tmpArr = addedSkillsArr.filter(skill => skill !== skillObj);
     setAddedSkillsArr(tmpArr);
+    //add back to the main list array
+    setSkillsArr([...skillsArr, skillObj]);
+    //how to force a refresh of the filtered list?
   };
 
   return (
@@ -172,8 +170,9 @@ const AddRoleForm = () => {
                     ))}
                 </List>
               </Grid>
+              <Grid></Grid>
               <Grid item md={3}>
-                <List>
+                <List sx={{maxHeight: '250px', overflowY: 'auto'}}>
                   {addedSkillsArr &&
                     addedSkillsArr.slice(0, 5).map(addedSkill => (
                       <ListItemButton

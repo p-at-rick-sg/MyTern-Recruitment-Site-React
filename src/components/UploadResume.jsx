@@ -5,7 +5,6 @@ import {useUser} from '../hooks/useUser';
 import {Box, TextField, Grid, LinearProgress, Button} from '@mui/material';
 
 const UploadResume = ({analysing, setAnalysing, setImportResult}) => {
-  //add projectID prop after testing
   const {user} = useUser();
   const [resume, setResume] = useState(null);
   const [inputKey, setInputKey] = useState('key');
@@ -35,9 +34,8 @@ const UploadResume = ({analysing, setAnalysing, setImportResult}) => {
         setInputKey(inputKey + 'x');
         //pass for analysis
         setAnalysing(true);
-        const userId = '7adf8371-9148-48c6-b7ad-090016faba21'; //temp pass fixed id for testing as we don't have local info yet
         console.log(uploadedResponse);
-        const analysisResult = await analyseResume(uploadedResponse, userId);
+        const analysisResult = await analyseResume(uploadedResponse, user.id);
         console.log('Anaysis Returned Obj: ', analysisResult);
         if (analysisResult) {
           setFileError(false);
@@ -78,15 +76,13 @@ const UploadResume = ({analysing, setAnalysing, setImportResult}) => {
     }
   };
 
-  //Using a standard fetch for now - may upodate the hook tomorrow to accomodate the application type required
   const uploadResume = async imageObj => {
     try {
-      //temp project id var:
-      const userId = '7adf8371-9148-48c6-b7ad-090016faba21'; //matt@gmail.com user ID for testing
       const formdata = new FormData();
       formdata.append('resume', resume.file, resume.name);
       const requestOptions = {
         method: 'POST',
+        credentials: 'include',
         body: formdata,
         redirect: 'follow',
       };
